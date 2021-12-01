@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  backend:
+    container_name: toys-be
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8081:8081
+      - 8787:8787
+
+  db:
+    image: postgres:9.6.10
+    container_name: toys-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres-volume:/data/postgres
+    ports:
+      - 5432:5432
+      - 5433:5432
+    restart: always
+
+volumes:
+  postgres-volume:
