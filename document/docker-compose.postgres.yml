@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   postgres:
-    container_name: postgres_container
+    container_name: postgres_db_toy
     image: postgres:9.6.10
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /data/postgres
     volumes:
-       - postgres:/data/postgres
+       - postgres-toy-db:/data/postgres
     ports:
       - "${POSTGRES_PORT}:5432"
     networks:
@@ -22,4 +22,4 @@ networks:
     driver: bridge
 
 volumes:
-    postgres:
+  postgres-toy-db:
