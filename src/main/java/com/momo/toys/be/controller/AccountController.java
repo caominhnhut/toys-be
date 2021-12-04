@@ -5,9 +5,6 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.momo.toys.be.dto.*;
-import com.momo.toys.be.entity.UserEntity;
-import com.momo.toys.be.factory.TokenHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,21 +17,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.momo.toys.be.dto.Account;
+import com.momo.toys.be.dto.AccountId;
+import com.momo.toys.be.dto.AuthenticatedResult;
+import com.momo.toys.be.dto.Credential;
+import com.momo.toys.be.dto.Problem;
+import com.momo.toys.be.dto.Role;
+import com.momo.toys.be.entity.UserEntity;
 import com.momo.toys.be.enumeration.FieldName;
 import com.momo.toys.be.exception.ValidationException;
+import com.momo.toys.be.factory.CommonUtility;
+import com.momo.toys.be.factory.TokenHelper;
 import com.momo.toys.be.factory.mapper.AccountMapper;
 import com.momo.toys.be.service.AccountService;
-
-/*
-    FE ----> DTO(Account) BE (Controller)
-    Controller: Recive requestion, return Response
-    Service: Handle logic
-    Repository: DB
-    ---
-    FE ----> DTO (target) <---- BE
-    Controller ----> Model <----- Service
-    Service ----> Entity <------ Repository
-     */
 
 @RestController
 public class AccountController{
@@ -48,9 +43,14 @@ public class AccountController{
     @Autowired
     private TokenHelper tokenHelper;
 
-    private Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+    @Autowired
+    private CommonUtility commonUtility;
 
-    private Pattern VALID_PASSWORD_REGEX = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*+=])(?=\\S+$).{8,}$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern VALID_PASSWORD_REGEX = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*+=])(?=\\S+$).{8,}$", Pattern.CASE_INSENSITIVE);
+
+    private static final String AUTHENTICATION_ERROR = "Username or password is incorrect";
 
     private Predicate<String> validateEmailFormat = emailStr -> {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
@@ -63,17 +63,12 @@ public class AccountController{
     };
 
     @PostMapping("/no-auth/account")
-    private ResponseEntity createAccount(@RequestBody Account accountDto){
+    public ResponseEntity createAccount(@RequestBody Account accountDto){
 
         try{
             validate(accountDto);
         }catch(ValidationException e){
-
-            Problem problem = new Problem();
-            problem.setTitle(HttpStatus.INTERNAL_SERVER_ERROR.toString());
-            problem.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            problem.setDetail(e.getMessage());
-
+            Problem problem = commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }
 
@@ -88,20 +83,16 @@ public class AccountController{
     }
 
     @PostMapping("/authenticate")
-    private ResponseEntity login(@RequestBody Credential credential){
+    public ResponseEntity login(@RequestBody Credential credential){
+
         Authentication authentication;
         try{
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credential.getUserName(), credential.getPassword()));
         }
         catch(AuthenticationException e){
-            Problem problem = new Problem();
-            problem.setTitle(HttpStatus.UNAUTHORIZED.toString());
-            problem.setStatus(HttpStatus.UNAUTHORIZED.value());
-            problem.setDetail("Username or Password is incorrect");
-
+            Problem problem = commonUtility.createProblem(HttpStatus.UNAUTHORIZED.toString(), HttpStatus.UNAUTHORIZED.value(), AUTHENTICATION_ERROR);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
         }
-
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -123,9 +114,9 @@ public class AccountController{
 
         isRolesNotEmpty(account.getRoles());
 
-        validateUserName(account.getUserName(), FieldName.userName);
+        validateUserName(account.getUserName());
 
-        validatePassword(account.getPassword(), FieldName.password);
+        validatePassword(account.getPassword());
     }
 
     private void isNotEmpty(String data, FieldName fieldName) throws ValidationException{
@@ -140,15 +131,15 @@ public class AccountController{
         }
     }
 
-    private void validateUserName(String userName, FieldName fieldName) throws ValidationException{
+    private void validateUserName(String userName) throws ValidationException{
         if(!validateEmailFormat.test(userName)){
-            throw new ValidationException(fieldName.userName.getValidationMessage());
+            throw new ValidationException(FieldName.userName.getValidationMessage());
         }
     }
 
-    private void validatePassword(String password, FieldName fieldName) throws ValidationException{
+    private void validatePassword(String password) throws ValidationException{
         if(!validatePassword.test(password)){
-            throw new ValidationException(fieldName.password.getValidationMessage());
+            throw new ValidationException(FieldName.password.getValidationMessage());
         }
     }
 }

@@ -37,8 +37,8 @@ paths:
 
   /authenticate:
     post:
-      summary: Login account customer
-      description: The api is used for login account customer.
+      summary: Account authentication
+      description: The api is used for authenticating an account.
       operationId: login
       tags:
         - Account
@@ -160,17 +160,17 @@ components:
             $ref: '#/components/schemas/Role'
 
     Credential:
-      description: An object which contains details about a Account.
+      description: An object which contains username and password of an account.
       required:
         - userName
         - password
       properties:
         userName:
-          description: The name of user will be created.
+          description: The username of an account.
           example: 'customer@gmail.com'
           type: string
         password:
-          description: The password.
+          description: The password of an account.
           example: 'abc123'
           type: string
 
@@ -193,17 +193,17 @@ components:
           format: int64
 
     AuthenticatedResult:
-      description: The token give for user login success.
+      description: The object contains token detail.
       required:
         - token
         - expiredIn
       properties:
         token:
-          description: Token for user login success.
+          description: The token.
           example: abc.xyz.def
           type: string
         expiredIn:
-          description: Timeout
+          description: The time token valid.
           example: 3600
           type: integer
           format: int64
