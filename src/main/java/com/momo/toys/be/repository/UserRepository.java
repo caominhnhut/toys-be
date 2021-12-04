@@ -4,6 +4,8 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.momo.toys.be.entity.UserEntity;
 
-public interface UserRepository extends CrudRepository<UserEntity, Long>{
+import java.util.List;
 
+public interface UserRepository extends CrudRepository<UserEntity, Long>{
+    List<UserEntity> findByEmail(String email);
 }
