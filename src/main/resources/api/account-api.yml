@@ -8,7 +8,7 @@ info:
 servers:
   - url: '{server}'
 paths:
-  /authenticate/account:
+  /no-auth/account:
     post:
       summary: Create an account
       description: The api is used for creating a new account.

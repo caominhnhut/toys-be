@@ -52,7 +52,7 @@ public class AccountController{
         return matcher.find();
     };
 
-    @PostMapping("/authenticate/account")
+    @PostMapping("/no-auth/account")
     private ResponseEntity createAccount(@RequestBody Account accountDto){
 
         try{
