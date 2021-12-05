@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.momo.toys.be.dto.Role;
+import com.momo.toys.be.account.Role;
 import com.momo.toys.be.enumeration.SupportedType;
 import com.momo.toys.be.exception.ValidationException;
 import com.momo.toys.be.validation.ValidationData;

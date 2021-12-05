@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.momo.toys.be.dto.Account;
-import com.momo.toys.be.dto.Role;
+import com.momo.toys.be.account.Account;
+import com.momo.toys.be.account.Role;
 import com.momo.toys.be.entity.Authority;
 import com.momo.toys.be.entity.UserEntity;
 import com.momo.toys.be.enumeration.AuthorityName;

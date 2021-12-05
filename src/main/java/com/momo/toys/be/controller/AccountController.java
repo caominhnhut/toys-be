@@ -14,14 +14,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.momo.toys.be.dto.Account;
-import com.momo.toys.be.dto.AccountId;
-import com.momo.toys.be.dto.AuthenticatedResult;
-import com.momo.toys.be.dto.Credential;
-import com.momo.toys.be.dto.Problem;
+import com.momo.toys.be.account.Account;
+import com.momo.toys.be.account.AccountId;
+import com.momo.toys.be.account.AuthenticatedResult;
+import com.momo.toys.be.account.Credential;
+import com.momo.toys.be.account.Problem;
+import com.momo.toys.be.account.Roles;
 import com.momo.toys.be.entity.UserEntity;
 import com.momo.toys.be.exception.ValidationException;
 import com.momo.toys.be.factory.CommonUtility;
@@ -54,7 +56,7 @@ public class AccountController{
     @PostMapping("/no-auth/account")
     public ResponseEntity createAccount(@RequestBody Account accountDto){
 
-        Problem problem = validate.apply(accountDto);
+        Problem problem = validatorAccountCreation.apply(accountDto);
         if(Strings.isNotEmpty(problem.getTitle())){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }
@@ -93,7 +95,25 @@ public class AccountController{
         return ResponseEntity.ok(response);
     }
 
-    private Function<Account, Problem> validate = accountDto -> {
+    @PutMapping("/account{accountId}")
+    public ResponseEntity updateRoles(@RequestBody Roles rolesDto){
+
+        Problem problem = validatorAccountCreation.apply(accountDto);
+        if(Strings.isNotEmpty(problem.getTitle())){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
+        }
+
+        com.momo.toys.be.model.Account accountModel = AccountMapper.mapToModel.apply(accountDto);
+
+        Long id = accountService.create(accountModel);
+
+        AccountId accountId = new AccountId();
+        accountId.setId(id);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(accountId);
+    }
+
+    private Function<Account, Problem> validatorAccountCreation = accountDto -> {
 
         Problem problem = new Problem();
 

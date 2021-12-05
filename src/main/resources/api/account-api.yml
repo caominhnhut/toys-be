@@ -35,6 +35,35 @@ paths:
         default:
           $ref: '#/components/responses/Problem'
 
+  /account/{account-id}:
+    put:
+      summary: Update roles for an existing account
+      description: The api is used for updating roles of an existing account.
+      operationId: updateRoles
+      tags:
+        - Account
+      requestBody:
+        $ref: '#/components/requestBodies/UpdatingRoles'
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+      responses:
+        '201':
+          $ref: '#/components/responses/AccountId'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
   /authenticate:
     post:
       summary: Account authentication
@@ -90,6 +119,14 @@ components:
           schema:
             $ref: '#/components/schemas/Credential'
 
+    UpdatingRoles:
+      description: An object containing updating roles of an account.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Roles'
+
   responses:
 
     AccountId:
@@ -112,6 +149,15 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Problem'
+
+  parameters:
+    AccountIdPathParam:
+      name: account-id
+      in: path
+      description: The identification of an account
+      required: true
+      schema:
+        $ref: '#/components/schemas/AccountId'
 
   schemas:
 
@@ -173,6 +219,15 @@ components:
           description: The password of an account.
           example: 'abc123'
           type: string
+
+    Roles:
+      description: List roles of user.
+      properties:
+        roles:
+          example: '["ROLE_CUSTOMER","ROLE_EMPLOYEE"]'
+          type : array
+          items :
+            $ref: '#/components/schemas/Role'
 
     Role:
       description: Role of user.
