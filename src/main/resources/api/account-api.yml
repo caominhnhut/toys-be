@@ -151,6 +151,7 @@ components:
             $ref: '#/components/schemas/Problem'
 
   parameters:
+
     AccountIdPathParam:
       name: account-id
       in: path
@@ -224,8 +225,7 @@ components:
       example: '["ROLE_CUSTOMER","ROLE_EMPLOYEE"]'
       type : array
       items :
-        type: string
-
+        $ref: '#/components/schemas/Role'
 
     Role:
       description: Role of user.
