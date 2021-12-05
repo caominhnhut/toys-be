@@ -2,6 +2,7 @@ package com.momo.toys.be.controller;
 
 import static com.momo.toys.be.enumeration.SupportedType.ACCOUNT_CREATION;
 
+import java.util.List;
 import java.util.function.Function;
 
 import org.apache.logging.log4j.util.Strings;
@@ -23,7 +24,6 @@ import com.momo.toys.be.account.AccountId;
 import com.momo.toys.be.account.AuthenticatedResult;
 import com.momo.toys.be.account.Credential;
 import com.momo.toys.be.account.Problem;
-import com.momo.toys.be.account.Roles;
 import com.momo.toys.be.entity.UserEntity;
 import com.momo.toys.be.exception.ValidationException;
 import com.momo.toys.be.factory.CommonUtility;
@@ -77,8 +77,7 @@ public class AccountController{
         Authentication authentication;
         try{
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credential.getUserName(), credential.getPassword()));
-        }
-        catch(AuthenticationException e){
+        }catch(AuthenticationException e){
             Problem problem = commonUtility.createProblem(HttpStatus.UNAUTHORIZED.toString(), HttpStatus.UNAUTHORIZED.value(), AUTHENTICATION_ERROR);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
         }
@@ -95,32 +94,17 @@ public class AccountController{
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/account{accountId}")
-    public ResponseEntity updateRoles(@RequestBody Roles rolesDto){
+    @PutMapping("/account/{accountId}")
+    public ResponseEntity updateRoles(@RequestBody List<String> roles){
 
-        Problem problem = validatorAccountCreation.apply(accountDto);
-        if(Strings.isNotEmpty(problem.getTitle())){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
-        }
-
-        com.momo.toys.be.model.Account accountModel = AccountMapper.mapToModel.apply(accountDto);
-
-        Long id = accountService.create(accountModel);
-
-        AccountId accountId = new AccountId();
-        accountId.setId(id);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(accountId);
+        return null;
     }
 
     private Function<Account, Problem> validatorAccountCreation = accountDto -> {
 
         Problem problem = new Problem();
 
-        ValidationData validationData = new ValidationData()
-                .setEmail(accountDto.getUserName())
-                .setPassword(accountDto.getPassword())
-                .setRoles(accountDto.getRoles());
+        ValidationData validationData = new ValidationData().setEmail(accountDto.getUserName()).setPassword(accountDto.getPassword()).setRoles(accountDto.getRoles());
 
         try{
             validationProvider.executeValidators(validationData, ACCOUNT_CREATION);

@@ -43,7 +43,7 @@ paths:
       tags:
         - Account
       requestBody:
-        $ref: '#/components/requestBodies/UpdatingRoles'
+        $ref: '#/components/requestBodies/Roles'
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
       responses:
@@ -119,7 +119,7 @@ components:
           schema:
             $ref: '#/components/schemas/Credential'
 
-    UpdatingRoles:
+    Roles:
       description: An object containing updating roles of an account.
       required: true
       content:
@@ -221,13 +221,11 @@ components:
           type: string
 
     Roles:
-      description: List roles of user.
-      properties:
-        roles:
-          example: '["ROLE_CUSTOMER","ROLE_EMPLOYEE"]'
-          type : array
-          items :
-            $ref: '#/components/schemas/Role'
+      example: '["ROLE_CUSTOMER","ROLE_EMPLOYEE"]'
+      type : array
+      items :
+        type: string
+
 
     Role:
       description: Role of user.
