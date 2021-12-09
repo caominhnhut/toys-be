@@ -4,6 +4,10 @@
 ```bash
 docker-compose -f .\docker-compose.postgres.yml up -d
 ```
+- Go to toys-be/document folder to start the mongodb
+```bash
+docker-compose -f .\docker-compose.mongo.yml up --build -d
+```
 - Open termimal/cmd type the below command to see if the database works
 ```
 docker ps
