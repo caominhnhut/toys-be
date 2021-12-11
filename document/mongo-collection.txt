@@ -1,0 +1,43 @@
+@startuml
+class BaseCollection {
+  String id
+  Calendar createdDate
+  Calendar updatedDate
+}
+
+class MenuCollection {
+  String name
+}
+
+class CategoryCollection {
+  String name
+}
+
+class FileData {
+  String name
+  String fileType
+  byte[] content
+}
+
+class ProductCollection {
+  String id
+  String code
+  String name
+  String owner
+  String description
+  EnumSize size
+  EnumColor color
+  BigDecimal costPrice
+  BigDecimal price
+  List<FileData> images
+  List<EnumTag> tags
+}
+
+BaseCollection <|-- MenuCollection
+BaseCollection <|-- CategoryCollection
+BaseCollection <|-- FileData
+BaseCollection <|-- ProductCollection
+MenuCollection "1" *-- "N" CategoryCollection
+CategoryCollection"1" *-- "N" ProductCollection
+ProductCollection"1" *-- "N" FileData
+@enduml

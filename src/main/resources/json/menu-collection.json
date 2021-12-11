@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Đồ Chơi Gỗ",
+    "categories": [
+      {
+        "name": "Đồ Chơi Bảng Tín"
+      },
+      {
+        "name": "Đồ Chơi Hình Học"
+      },
+      {
+        "name": "Đồ Chơi Con Vật"
+      },
+      {
+        "name": "Đồ Chơi Học Tập"
+      }
+    ]
+  },
+  {
+    "name": "Đồ Chơi Nhựa",
+    "categories": [
+      {
+        "name": "Xe Điều Khiển"
+      },
+      {
+        "name": "Xe Địa Hình"
+      },
+      {
+        "name": "Xe Công Trường"
+      },
+      {
+        "name": "Dụng Cụ Làm Bếp"
+      },
+      {
+        "name": "Máy Bay"
+      },
+      {
+        "name": "Đồ Chơi Xúc Cát"
+      }
+    ]
+  }
+]
