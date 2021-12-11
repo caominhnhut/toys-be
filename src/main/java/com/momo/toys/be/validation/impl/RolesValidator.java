@@ -1,6 +1,7 @@
 package com.momo.toys.be.validation.impl;
 
 import static com.momo.toys.be.enumeration.SupportedType.ACCOUNT_CREATION;
+import static com.momo.toys.be.enumeration.SupportedType.ACCOUNT_UPDATING;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +27,7 @@ public class RolesValidator implements Validator{
 
     @Override
     public List<SupportedType> getSupportedTypes(){
-        return Arrays.asList(ACCOUNT_CREATION);
+        return Arrays.asList(ACCOUNT_CREATION, ACCOUNT_UPDATING);
     }
 
     private void isRolesNotEmpty(List<Role> roles) throws ValidationException{

@@ -12,7 +12,7 @@ import com.momo.toys.be.enumeration.AuthorityName;
 
 public class AccountMapper{
 
-    private static Function<List<Role>, List<com.momo.toys.be.model.Authority>> mapToAuthorityList = roles -> roles.stream().map(role -> {
+    public static Function<List<Role>, List<com.momo.toys.be.model.Authority>> mapToAuthorityList = roles -> roles.stream().map(role -> {
         com.momo.toys.be.model.Authority authority = new com.momo.toys.be.model.Authority();
         authority.setAuthorityName(AuthorityName.valueOf(role.toString()));
         return authority;
@@ -27,7 +27,7 @@ public class AccountMapper{
         return model;
     };
 
-    private static Function<List<com.momo.toys.be.model.Authority>, List<Authority>> mapToAuthorityEntity = authorities -> authorities.stream().map(authority -> {
+    public static Function<List<com.momo.toys.be.model.Authority>, List<Authority>> mapToAuthorityEntity = authorities -> authorities.stream().map(authority -> {
         Authority authorityEntity = new Authority();
         authorityEntity.setName(authority.getAuthorityName());
         return authorityEntity;

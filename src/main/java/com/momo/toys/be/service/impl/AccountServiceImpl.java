@@ -1,9 +1,12 @@
 package com.momo.toys.be.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,8 @@ import com.momo.toys.be.repository.AuthorityRepository;
 import com.momo.toys.be.repository.UserRepository;
 import com.momo.toys.be.service.AccountService;
 
+import javassist.NotFoundException;
+
 @Service
 public class AccountServiceImpl implements AccountService{
 
@@ -28,6 +33,8 @@ public class AccountServiceImpl implements AccountService{
 
     @Autowired
     private UserRepository userRepository;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     @Override
     public Long create(Account account){
@@ -43,6 +50,25 @@ public class AccountServiceImpl implements AccountService{
         UserEntity createdUser = userRepository.save(userEntity);
 
         return createdUser.getId();
+    }
+
+    @Override
+    public boolean update(Account account) throws NotFoundException{
+        List<Authority> authorities = findAuthoritiesByName.apply(AccountMapper.mapToAuthorityEntity.apply(account.getAuthorities()));
+        Optional<UserEntity> optionalUserEntity= userRepository.findById(account.getId());
+        if(optionalUserEntity.isPresent()){
+            UserEntity userEntity = optionalUserEntity.get();
+            userEntity.setAuthorities(authorities);
+            try{
+                userRepository.save(userEntity);
+                return true;
+            }
+            catch(Exception e){
+                LOGGER.error(e.getMessage());
+                throw new IllegalArgumentException(e.getMessage());
+            }
+        }
+        throw new NotFoundException(String.format("Account with id [%s] not found", account.getId()));
     }
 
     private Function<List<Authority>, List<Authority>> findAuthoritiesByName = authorities -> {
