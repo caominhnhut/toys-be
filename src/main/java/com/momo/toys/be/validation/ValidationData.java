@@ -13,9 +13,21 @@ public class ValidationData{
 
     private List<Role> roles = new ArrayList<>();
 
+    public String getNavigationName() {
+        return navigationName;
+    }
+
+    public ValidationData setNavigationName(String navigationName) {
+        this.navigationName = navigationName;
+        return null;
+    }
+
+    private String navigationName;
+
     public String getEmail(){
         return email;
     }
+
 
     public ValidationData setEmail(String email){
         this.email = email;

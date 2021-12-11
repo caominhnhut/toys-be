@@ -1,0 +1,118 @@
+openapi: "3.0.2"
+info:
+  title: Navigation API
+  description: This service exposes the api of navigation.
+  version: '2021.1.0'
+  x-api-id: api-v0001
+  x-audience: fashion-internal
+servers:
+  - url: '{server}'
+paths:
+  /navigation:
+    post:
+      summary: Create an navigation
+      description: The api is used for creating a new navigation.
+      operationId: create
+      tags:
+        - Navigation
+      requestBody:
+        $ref: '#/components/requestBodies/Navigation'
+      responses:
+        '201':
+          $ref: '#/components/responses/NavigationId'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
+components:
+
+  headers:
+    X-Supported-Versions:
+      description: A comma separated list of API versions supported by this resource method, referencing the "api-version" in the Content-Type.
+      schema:
+        type: string
+      example: '2020.1.0'
+
+  requestBodies:
+
+    Navigation:
+      description: An object containing the details of an navigation.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Navigation'
+
+  responses:
+
+    NavigationId:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NavigationId'
+
+    Problem:
+      description: A generic problem response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+  schemas:
+
+    Problem:
+      description: A generic problem response describing a client or server problem.
+      required:
+        - title
+        - status
+        - detail
+      properties:
+        title:
+          description: A summary of the problem.
+          type: string
+          example: Service Unavailable
+        status:
+          description: The HTTP status code.
+          type: integer
+          format: int32
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+          example: 503
+        detail:
+          description: A detail of problem.
+          type: string
+          example: Connection time out
+
+    Navigation:
+      description: An object which contains details about a Navigatio.
+      required:
+        - name
+      properties:
+        name:
+          description: The name of navigation will be created.
+          example: 'Home'
+          type: string
+
+    NavigationId:
+      description: The identification of an navigation.
+      required:
+        - id
+      properties:
+        id:
+          description: The value of identification.
+          example: 123
+          type: integer
+          format: int64
