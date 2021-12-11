@@ -123,11 +123,11 @@ public class AccountController {
         return problem;
     };
 
-    private Function<List<Role>, Problem> validatorAccountUpdating = rolesDto -> {
+    private Function<List<Role>, Problem> validatorAccountUpdating = roles -> {
 
         Problem problem = new Problem();
 
-        ValidationData validationData = new ValidationData().setRoles(rolesDto);
+        ValidationData validationData = new ValidationData().setRoles(roles);
 
         try {
             validationProvider.executeValidators(validationData, ACCOUNT_UPDATING);
