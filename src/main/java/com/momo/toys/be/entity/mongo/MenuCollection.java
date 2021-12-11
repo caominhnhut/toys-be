@@ -27,4 +27,5 @@ public class MenuCollection extends BaseCollection {
     public List<CategoryCollection> getCategories() {
         return categories;
     }
+
 }
