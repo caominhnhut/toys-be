@@ -82,8 +82,8 @@
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/api/account-api.yml</inputSpec>
                             <generatorName>jaxrs-spec</generatorName>
-                            <apiPackage>com.momo.toys.be.dto</apiPackage>
-                            <modelPackage>com.momo.toys.be.dto</modelPackage>
+                            <apiPackage>com.momo.toys.be.account</apiPackage>
+                            <modelPackage>com.momo.toys.be.account</modelPackage>
                             <generateApiDocumentation>false</generateApiDocumentation>
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <generateModels>true</generateModels>

@@ -3,7 +3,7 @@ package com.momo.toys.be.validation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.momo.toys.be.dto.Role;
+import com.momo.toys.be.account.Role;
 
 public class ValidationData{
 

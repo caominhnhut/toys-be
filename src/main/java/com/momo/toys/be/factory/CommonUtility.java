@@ -5,7 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.momo.toys.be.dto.Problem;
+import com.momo.toys.be.account.Problem;
 
 @Component
 public class CommonUtility{
