@@ -43,5 +43,15 @@ public class DocumentServiceImpl implements DocumentService {
         return document;
     }
 
+    @Override
+    public Document readFile(String filename) throws FileStorageException {
+
+        byte[] content = storeDocumentService.load(filename);
+        Document document = new Document();
+        document.setFileContent(content);
+
+        return document;
+    }
+
     private UnaryOperator<String> buildDownloadUri = filename -> downloadUri.concat(filename);
 }

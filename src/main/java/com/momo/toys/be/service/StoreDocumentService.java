@@ -6,4 +6,6 @@ import com.momo.toys.be.model.Document;
 public interface StoreDocumentService {
 
     void store(Document document) throws FileStorageException;
+
+    byte[] load(String filename) throws FileStorageException;
 }

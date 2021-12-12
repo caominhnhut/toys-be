@@ -31,4 +31,14 @@ public class StoreDocumentToDrive implements StoreDocumentService {
             throw new FileStorageException(e.getMessage());
         }
     }
+
+    @Override
+    public byte[] load(String filename) throws FileStorageException {
+        Path path = Paths.get(String.format("%s\\%s", filePath, filename));
+        try {
+            return Files.readAllBytes(path);
+        } catch (IOException e) {
+            throw new FileStorageException(e.getMessage());
+        }
+    }
 }
