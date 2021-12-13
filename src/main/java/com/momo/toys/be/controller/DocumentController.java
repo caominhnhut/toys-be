@@ -11,6 +11,7 @@ import com.momo.toys.be.validation.ValidationData;
 import com.momo.toys.be.validation.ValidationProvider;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,7 @@ public class DocumentController {
     private CommonUtility commonUtility;
 
     @Autowired
+    @Qualifier("mongoDocumentService")
     private DocumentService documentService;
 
     @PostMapping(value = "/document")

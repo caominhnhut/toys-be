@@ -1,8 +1,12 @@
 package com.momo.toys.be.model;
 
+import org.bson.types.ObjectId;
+
 public class Document {
 
     private Long id;
+
+    private ObjectId objectId;
 
     private String filename;
 
@@ -60,5 +64,13 @@ public class Document {
 
     public void setFileContent(byte[] fileContent) {
         this.fileContent = fileContent;
+    }
+
+    public ObjectId getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(ObjectId objectId) {
+        this.objectId = objectId;
     }
 }
