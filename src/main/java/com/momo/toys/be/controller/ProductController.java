@@ -2,14 +2,18 @@ package com.momo.toys.be.controller;
 
 import com.momo.toys.be.entity.mongo.CategoryCollection;
 import com.momo.toys.be.entity.mongo.MenuCollection;
-import com.momo.toys.be.entity.mongo.ProductCollection;
-import com.momo.toys.be.repository.ProductRepository;
+import com.momo.toys.be.factory.mapper.ProductMapper;
+import com.momo.toys.be.product.Product;
+import com.momo.toys.be.product.ProductId;
+import com.momo.toys.be.service.ProductService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,10 +23,10 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
 
     @GetMapping("/no-auth/products")
-    public ResponseEntity findAll(){
+    public ResponseEntity findAll() {
 
         //List<ProductCollection> products = productRepository.findAll();
 
@@ -31,15 +35,23 @@ public class ProductController {
         return ResponseEntity.status(200).body(menuCollections);
     }
 
-    @PostMapping("/no-auth/products")
-    public ResponseEntity create(@RequestBody ProductCollection productCollection){
+    @PostMapping(value = "/category/{category-id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_EMPLOYEE')")
+    public ResponseEntity create(@RequestPart("product") Product product, @RequestPart("images") MultipartFile[] images, @PathVariable("category-id") String categoryId) throws NotFoundException {
 
-        productRepository.save(productCollection);
+        com.momo.toys.be.model.Product productModel = ProductMapper.mapToProductModel.apply(product);
 
-        return ResponseEntity.status(200).body(productCollection);
+        ProductMapper.mapImages.accept(images, productModel);
+
+        String id = productService.create(categoryId, productModel);
+
+        ProductId productId = new ProductId();
+        productId.setId(id);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(productId);
     }
 
-    private List<MenuCollection> mock(){
+    private List<MenuCollection> mock() {
         List<CategoryCollection> categoryCollections1 = new ArrayList<>();
 
         CategoryCollection categoryCollection1 = new CategoryCollection();

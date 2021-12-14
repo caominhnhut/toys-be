@@ -1,53 +1,37 @@
-package com.momo.toys.be.entity.mongo;
+package com.momo.toys.be.model;
 
 import com.momo.toys.be.enumeration.EnumColor;
 import com.momo.toys.be.enumeration.EnumTag;
-import com.momo.toys.be.model.DocumentMeta;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "product")
-public class ProductCollection {
+public class Product {
 
-    @Id
     private String id;
 
-    @Field(value = "code")
     private String code;
 
-    @Indexed(unique = true)
-    @Field(value = "name")
     private String name;
 
-    @Field(value = "owner")
     private String owner;
 
-    @Field(value = "description")
     private String description;
 
-    @Field(value = "amount")
+    private String imageName;
+
     private int amount;
 
-    @Field(value = "cost_price")
     private BigDecimal costPrice;
 
-    @Field(value = "price")
     private BigDecimal price;
 
-    @Field(value = "color")
     private EnumColor color;
 
-    @Field(value = "tags")
     private List<EnumTag> tags = new ArrayList<>();
 
-    @Field(value = "images")
-    private List<DocumentMeta> images = new ArrayList<>();
+    private List<Document> images = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -73,22 +57,6 @@ public class ProductCollection {
         this.name = name;
     }
 
-    public BigDecimal getCostPrice() {
-        return costPrice;
-    }
-
-    public void setCostPrice(BigDecimal costPrice) {
-        this.costPrice = costPrice;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
     public String getOwner() {
         return owner;
     }
@@ -105,12 +73,36 @@ public class ProductCollection {
         this.description = description;
     }
 
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
     public int getAmount() {
         return amount;
     }
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public BigDecimal getCostPrice() {
+        return costPrice;
+    }
+
+    public void setCostPrice(BigDecimal costPrice) {
+        this.costPrice = costPrice;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public EnumColor getColor() {
@@ -125,7 +117,15 @@ public class ProductCollection {
         return tags;
     }
 
-    public List<DocumentMeta> getImages() {
+    public void setTags(List<EnumTag> tags) {
+        this.tags = tags;
+    }
+
+    public List<Document> getImages() {
         return images;
+    }
+
+    public void setImages(List<Document> images) {
+        this.images = images;
     }
 }

@@ -1,0 +1,16 @@
+{
+    "id": null,
+    "code": "W001",
+    "name": "Xe Kéo Hình Khối",
+    "onwer": null,
+    "description": "Sản phẩm chất lượng tuyệt vời",
+    "imageName": "c.jpg",
+    "amount": 7,
+    "costPrice": 100000,
+    "price": 150000,
+    "color": "Yellow",
+    "images": [],
+    "tags": [
+        "NEW"
+    ]
+}

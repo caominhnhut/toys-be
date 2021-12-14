@@ -21,7 +21,7 @@ public class BaseEntity {
     public void onCreate() {
         createdDate= Calendar.getInstance();
         updatedDate=null;
-        this.status = EntityStatus.PENDING;
+        this.status = EntityStatus.ACTIVE;
     }
 
     @PreUpdate

@@ -1,0 +1,206 @@
+openapi: "3.0.2"
+info:
+  title: Product API
+  description: This service exposes the api of product.
+  version: '2021.1.0'
+  x-api-id: api-v0001
+  x-audience: toys-internal
+servers:
+  - url: '{server}'
+paths:
+  /product:
+    post:
+      summary: Create a product.
+      description: The api is used for creating a new product.
+      operationId: create
+      tags:
+        - Product
+      requestBody:
+        $ref: '#/components/requestBodies/Product'
+      responses:
+        '201':
+          $ref: '#/components/responses/ProductId'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
+components:
+
+  headers:
+    X-Supported-Versions:
+      description: A comma separated list of API versions supported by this resource method, referencing the "api-version" in the Content-Type.
+      schema:
+        type: string
+      example: '2020.1.0'
+
+  requestBodies:
+
+    Product:
+      description: An object containing the details of a product.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Product'
+
+  responses:
+
+    ProductId:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProductId'
+
+    Problem:
+      description: A generic problem response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+  schemas:
+
+    Problem:
+      description: A generic problem response describing a client or server problem.
+      required:
+        - title
+        - status
+        - detail
+      properties:
+        title:
+          description: A summary of the problem.
+          type: string
+          example: Service Unavailable
+        status:
+          description: The HTTP status code.
+          type: integer
+          format: int32
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+          example: 503
+        detail:
+          description: A detail of problem.
+          type: string
+          example: Connection time out
+
+    Product:
+      description: An object which contains details about a Account.
+      required:
+        - id
+        - code
+        - name
+        - onwer
+        - description
+        - imageName
+        - amount
+        - costPrice
+        - price
+        - color
+        - images
+      properties:
+        id:
+          description: The product identication.
+          example: 'qwertyuiop'
+          type: string
+        code:
+          description: The alias name.
+          example: 'W001'
+          type: string
+        name:
+          description: The product name.
+          example: 'Xe Điều Khiển'
+          type: string
+        onwer:
+          description: The product is created by.
+          example: 'admin@gmail.com'
+          type: string
+        description:
+          description: The short description.
+          example: 'Sản phẩm tốt, giá rẻ'
+          type: string
+        imageName:
+          description: The name of required images.
+          example: 'main.png'
+          type: string
+        amount:
+          description: The amount of product.
+          example: 7
+          type: integer
+          format: int32
+        costPrice:
+          description: The cost price of product.
+          example: 1000
+          type: number
+        price:
+          description: The price of product.
+          example: 1500
+          type: number
+        color:
+          $ref: '#/components/schemas/EnumColor'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileData'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnumTag'
+
+    FileData:
+      description: An object which contains the images information
+      required:
+        - isMainImage
+        - imageUrl
+      properties:
+        isMainImage:
+          description: This specifies which images should be main.
+          example: 'true'
+          type: boolean
+        fileUri:
+          description: The link point to image contence.
+          example: 'domain/abc.png'
+          type: string
+
+    EnumTag:
+      description: The label of information
+      enum:
+        - NEW
+        - HOT
+        - SALE
+        - SOLD
+
+    EnumColor:
+      description: Type of color.
+      enum:
+        - Red
+        - Green
+        - Blue
+        - Yellow
+        - Orange
+        - White
+        - Pink
+        - Black
+        - Combination
+
+    ProductId:
+      description: The identification of an product.
+      required:
+        - id
+      properties:
+        id:
+          description: The value of identification.
+          example: "qwertyuiop"
+          type: string
