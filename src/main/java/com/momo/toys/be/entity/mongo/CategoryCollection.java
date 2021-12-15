@@ -1,5 +1,6 @@
 package com.momo.toys.be.entity.mongo;
 
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -12,7 +13,7 @@ public class CategoryCollection extends BaseCollection {
     @Field(value = "name")
     private String name;
 
-    @Field(value = "products")
+    @DBRef
     private List<ProductCollection> products = new ArrayList<>();
 
     public String getName() {

@@ -20,7 +20,7 @@ public class GenerateModelController {
     public ResponseEntity generate(@PathVariable("model-type") ModelType modelType) {
         //ModelType modelType = ModelType.valueOf(type);
         switch (modelType) {
-            case product:
+            case PRODUCT:
                 Product product = generateModelService.generateProduct();
                 return ResponseEntity.status(HttpStatus.OK).body(product);
             default:

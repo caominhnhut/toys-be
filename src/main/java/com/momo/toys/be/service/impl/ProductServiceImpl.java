@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class ProductServiceImpl implements ProductService {
 
+    private static final String CATEGORY_NOT_FOUND = "The category not found";
     @Autowired
     private CategoryRepository categoryRepository;
 
@@ -44,10 +47,10 @@ public class ProductServiceImpl implements ProductService {
 
         Optional<CategoryCollection> optionalCategoryCollection = categoryRepository.findById(categoryId);
         if (!optionalCategoryCollection.isPresent()) {
-            throw new NotFoundException("The category not found");
+            throw new NotFoundException(CATEGORY_NOT_FOUND);
         }
 
-        Authentication authentication =accountService.getAuthenticatedUser();
+        Authentication authentication = accountService.getAuthenticatedUser();
         product.setOwner(authentication.getName());
 
         List<Document> insertedImages = insertImages.apply(product.getImages());
@@ -65,6 +68,25 @@ public class ProductServiceImpl implements ProductService {
         categoryRepository.save(category);
 
         return productCollection.getId();
+    }
+
+    @Override
+    public List<Product> findByCategoryId(String categoryId) throws NotFoundException {
+
+        Optional<CategoryCollection> optionalCategory = categoryRepository.findById(categoryId);
+        if (!optionalCategory.isPresent()) {
+            throw new NotFoundException(CATEGORY_NOT_FOUND);
+        }
+
+        CategoryCollection category = optionalCategory.get();
+
+        List<ProductCollection> products = category.getProducts();
+
+        if(products.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        return products.stream().map(ProductMapper.mapFromProductCollection::apply).collect(Collectors.toList());
     }
 
     private UnaryOperator<List<Document>> insertImages = documents -> {

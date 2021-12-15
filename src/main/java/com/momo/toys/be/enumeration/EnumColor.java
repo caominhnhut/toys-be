@@ -2,5 +2,5 @@ package com.momo.toys.be.enumeration;
 
 public enum EnumColor {
 
-    Red, Green, Blue, Yellow, Orange, White, Pink, Black, Combination
+    RED, GREEN, BLUE, YELLOW, ORANGE, WHITE, PINK, BLACK, COMBINATION
 }

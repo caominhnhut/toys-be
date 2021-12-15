@@ -16,6 +16,8 @@ public class Document {
 
     private Long fileSize;
 
+    private boolean isRequired;
+
     private byte[] fileContent;
 
     public Long getId() {
@@ -72,5 +74,13 @@ public class Document {
 
     public void setObjectId(ObjectId objectId) {
         this.objectId = objectId;
+    }
+
+    public boolean isRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(boolean required) {
+        isRequired = required;
     }
 }

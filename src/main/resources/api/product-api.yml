@@ -8,13 +8,15 @@ info:
 servers:
   - url: '{server}'
 paths:
-  /product:
+  /category/{category-id}/product:
     post:
       summary: Create a product.
       description: The api is used for creating a new product.
       operationId: create
       tags:
         - Product
+      parameters:
+        - $ref: '#/components/parameters/CategoryIdPathParam'
       requestBody:
         $ref: '#/components/requestBodies/Product'
       responses:
@@ -70,6 +72,15 @@ components:
           schema:
             $ref: '#/components/schemas/Problem'
 
+  parameters:
+    CategoryIdPathParam:
+      name: category-id
+      in: path
+      description: The identification of category.
+      required: true
+      schema:
+        $ref: '#/components/schemas/CategoryId'
+
   schemas:
 
     Problem:
@@ -108,7 +119,6 @@ components:
         - amount
         - costPrice
         - price
-        - color
         - images
       properties:
         id:
@@ -148,8 +158,6 @@ components:
           description: The price of product.
           example: 1500
           type: number
-        color:
-          $ref: '#/components/schemas/EnumColor'
         images:
           type: array
           items:
@@ -182,21 +190,19 @@ components:
         - SALE
         - SOLD
 
-    EnumColor:
-      description: Type of color.
-      enum:
-        - Red
-        - Green
-        - Blue
-        - Yellow
-        - Orange
-        - White
-        - Pink
-        - Black
-        - Combination
 
     ProductId:
       description: The identification of an product.
+      required:
+        - id
+      properties:
+        id:
+          description: The value of identification.
+          example: "qwertyuiop"
+          type: string
+
+    CategoryId:
+      description: The identification of category.
       required:
         - id
       properties:

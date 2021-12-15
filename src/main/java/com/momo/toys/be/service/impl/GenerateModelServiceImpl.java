@@ -1,6 +1,5 @@
 package com.momo.toys.be.service.impl;
 
-import com.momo.toys.be.product.EnumColor;
 import com.momo.toys.be.product.EnumTag;
 import com.momo.toys.be.product.Product;
 import com.momo.toys.be.service.GenerateModelService;
@@ -27,7 +26,6 @@ public class GenerateModelServiceImpl implements GenerateModelService {
         product.setImageName("c.png");
         product.setCostPrice(BigDecimal.valueOf(100000));
         product.setPrice(BigDecimal.valueOf(150000));
-        product.setColor(EnumColor.YELLOW);
         product.setTags(Arrays.asList(EnumTag.NEW));
 
         return product;
