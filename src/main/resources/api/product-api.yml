@@ -1,0 +1,167 @@
+openapi: "3.0.2"
+info:
+  title: Product API
+  description: This service exposes the api of product.
+  version: '2021.1.0'
+  x-api-id: api-v0001
+  x-audience: toys-internal
+servers:
+  - url: '{server}'
+paths:
+  /categories/{category-id}/product:
+    post:
+      summary: Create a product
+      description: The api is used for creating a new product.
+      operationId: createProduct
+      tags:
+        - Product
+      requestBody:
+        $ref: '#/components/requestBodies/Product'
+      parameters:
+        - $ref: '#/components/parameters/CategoryIdPathParam'
+      responses:
+        '201':
+          $ref: '#/components/responses/ProductId'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
+
+components:
+
+  headers:
+    X-Supported-Versions:
+      description: A comma separated list of API versions supported by this resource method, referencing the "api-version" in the Content-Type.
+      schema:
+        type: string
+      example: '2020.1.0'
+
+  requestBodies:
+
+    Product:
+      description: An object containing the details of a Product.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Product'
+
+  responses:
+
+    ProductId:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProductId'
+
+    Problem:
+      description: A generic problem response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+  parameters:
+
+    CategoryIdPathParam:
+      name: category-id
+      in: path
+      description: The identification of a category
+      required: true
+      schema:
+        $ref: '#/components/schemas/categoryId'
+
+  schemas:
+    categoryId:
+      description: The identification of a category.
+      required:
+        - id
+      properties:
+        id:
+          description: The value of identification.
+          example: 123
+          type: integer
+          format: int64
+
+    ProductId:
+      description: The identification of a product.
+      required:
+        - id
+      properties:
+        id:
+          description: The value of identification.
+          example: 123
+          type: integer
+          format: int64
+
+    Product:
+      description: An object which contains details about a product.
+      required:
+        - productName
+        - code
+      properties:
+        name:
+          description: The name of product will be created.
+          example: 'Rubik'
+          type: string
+        code:
+          description: The product code.
+          example: 'R001'
+          type: string
+        description:
+          description: The product description.
+          example: 'Rubik'
+          type: string
+        costPrice:
+          description: The product's cost price.
+          example: 150000
+          type: number
+        price:
+          description: The product's price.
+          example: 150000
+          type: number
+        amount:
+          description: The product's amount.
+          example: 150
+          type: integer
+          format: int64
+        createdBy:
+          description: The employee creates the product.
+          example: 'employee1@abc.xyz'
+          type: string
+
+    Problem:
+      description: A generic problem response describing a client or server problem.
+      required:
+        - title
+        - status
+        - detail
+      properties:
+        title:
+          description: A summary of the problem.
+          type: string
+          example: Service Unavailable
+        status:
+          description: The HTTP status code.
+          type: integer
+          format: int32
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+          example: 503
+        detail:
+          description: A detail of problem.
+          type: string
+          example: Connection time out

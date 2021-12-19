@@ -1,5 +1,7 @@
 package com.momo.toys.be.entity;
 
+import java.util.Set;
+
 import javax.persistence.*;
 
 @Entity
@@ -12,6 +14,9 @@ public class NavigationEntity extends BaseEntity {
 
     @Column(name = "name", unique = true)
     private String name;
+
+    @OneToMany(mappedBy = "navigation")
+    private Set<CategoryEntity> categories;
 
     public Long getId() {
         return id;
@@ -29,4 +34,11 @@ public class NavigationEntity extends BaseEntity {
         this.name = name;
     }
 
+    public Set<CategoryEntity> getCategories(){
+        return categories;
+    }
+
+    public void setCategories(Set<CategoryEntity> categories){
+        this.categories = categories;
+    }
 }
