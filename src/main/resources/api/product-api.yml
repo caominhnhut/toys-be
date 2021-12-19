@@ -136,10 +136,14 @@ components:
           description: The product's amount.
           example: 150
           type: integer
-          format: int64
+          format: int32
         createdBy:
           description: The employee creates the product.
           example: 'employee1@abc.xyz'
+          type: string
+        mainImage:
+          description: The product's main image.
+          example: 'abc.jpg'
           type: string
 
     Problem:

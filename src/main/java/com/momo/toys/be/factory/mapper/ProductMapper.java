@@ -1,0 +1,30 @@
+package com.momo.toys.be.factory.mapper;
+
+import java.util.function.Function;
+
+import com.momo.toys.be.entity.NavigationEntity;
+import com.momo.toys.be.entity.ProductEntity;
+import com.momo.toys.be.model.Navigation;
+import com.momo.toys.be.model.Product;
+
+public class ProductMapper{
+    private ProductMapper(){
+        // hide constructor
+    }
+    public static final Function<Product, ProductEntity> mapToEntity = navigation -> {
+
+        return null;
+    };
+
+    public static final Function<com.momo.toys.be.product.Product, Product> mapToModel = product -> {
+        Product productModel = new Product();
+        productModel.setName(product.getName());
+        productModel.setCode(product.getCode());
+        productModel.setAmount(product.getAmount());
+        productModel.setCostPrice(product.getCostPrice());
+        productModel.setPrice(product.getPrice());
+        productModel.setDescription(product.getDescription());
+        productModel.setMainImage(product.getMainImage());
+        return productModel;
+    };
+}
