@@ -62,6 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
                         "/**/*.html",
                         "/**/*.css",
                         "/**/*.js",
+                        "/*.js",
                         "/assets/**",
                         "/swagger-resources/**",
                         "/swagger-ui.html",
@@ -78,6 +79,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
     @Override
     public void configure(WebSecurity web) throws Exception{
         web.ignoring().antMatchers(HttpMethod.POST, "/authenticate/**", "/no-auth/**");
-        web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html", "/**/*.css", "/**/*.js", "/assets/**");
+        web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html", "/**/*.css", "/**/*.js","/*.js", "/assets/**");
     }
 }
