@@ -12,4 +12,4 @@ services:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     ports:
       - "27017:27017"
-    restart: unless-stopped
+    restart: always

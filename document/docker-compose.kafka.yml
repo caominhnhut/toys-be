@@ -6,7 +6,7 @@ services:
             - '2181:2181'
         environment:
             - ALLOW_ANONYMOUS_LOGIN=yes
-        restart: unless-stopped
+        restart: always
 
     kafka:
         image: 'bitnami/kafka:latest'
