@@ -1,5 +1,13 @@
 package com.momo.toys.be.service.impl;
 
+import java.util.Calendar;
+import java.util.function.UnaryOperator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import com.momo.toys.be.entity.DocumentEntity;
 import com.momo.toys.be.entity.ProductEntity;
 import com.momo.toys.be.exception.FileStorageException;
@@ -8,14 +16,9 @@ import com.momo.toys.be.model.Document;
 import com.momo.toys.be.repository.DocumentRepository;
 import com.momo.toys.be.service.DocumentService;
 import com.momo.toys.be.service.StoreDocumentService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.util.function.UnaryOperator;
 
 @Service
-public class DocumentServiceImpl implements DocumentService {
+public class DocumentServiceImpl implements DocumentService{
 
     @Value("${document.download.uri}")
     private String downloadUri;
@@ -26,12 +29,14 @@ public class DocumentServiceImpl implements DocumentService {
     @Autowired
     private DocumentRepository documentRepository;
 
-    @Override
-    public Document upload(Document document) {
+    private UnaryOperator<String> buildDownloadUri = filename -> downloadUri.concat(filename);
 
-        try {
+    @Override
+    public Document upload(Document document){
+
+        try{
             storeDocumentService.store(document);
-        } catch (FileStorageException e) {
+        }catch(FileStorageException e){
             throw new IllegalArgumentException(e.getMessage());
         }
 
@@ -45,11 +50,14 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Document upload(Document document, ProductEntity product) {
+    public Document upload(Document document, ProductEntity product){
+        String fileExtension = StringUtils.getFilenameExtension(document.getFilename());
+        Long timeStamp = Calendar.getInstance().getTime().getTime();
+        document.setFilename(String.format("%s.%s", timeStamp, fileExtension));
 
-        try {
+        try{
             storeDocumentService.store(document);
-        } catch (FileStorageException e) {
+        }catch(FileStorageException e){
             throw new IllegalArgumentException(e.getMessage());
         }
 
@@ -64,7 +72,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Document readFile(String filename) throws FileStorageException {
+    public Document readFile(String filename) throws FileStorageException{
 
         byte[] content = storeDocumentService.load(filename);
         Document document = new Document();
@@ -72,6 +80,4 @@ public class DocumentServiceImpl implements DocumentService {
 
         return document;
     }
-
-    private UnaryOperator<String> buildDownloadUri = filename -> downloadUri.concat(filename);
 }
