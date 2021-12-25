@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -44,6 +46,18 @@ public class ProductEntity extends BaseEntity{
 
     @OneToMany(mappedBy = "product")
     private Set<DocumentEntity> images;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private CategoryEntity categoryEntity;
+
+    public CategoryEntity getCategoryEntity(){
+        return categoryEntity;
+    }
+
+    public void setCategoryEntity(CategoryEntity categoryEntity){
+        this.categoryEntity = categoryEntity;
+    }
 
     @Column(name = "created_by")
     private String createdBy;

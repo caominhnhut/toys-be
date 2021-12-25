@@ -1,9 +1,7 @@
 package com.momo.toys.be.model;
 
 import java.math.BigDecimal;
-import java.util.Set;
-
-import com.momo.toys.be.entity.DocumentEntity;
+import java.util.List;
 
 public class Product{
 
@@ -21,9 +19,19 @@ public class Product{
 
     private BigDecimal price;
 
+    private Long categoryId;
+
     private String mainImage;
 
-    private Set<DocumentEntity> images;
+    private List<Document> images;
+
+    public Long getCategoryId(){
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId){
+        this.categoryId = categoryId;
+    }
 
     private String createdBy;
 
@@ -91,11 +99,11 @@ public class Product{
         this.mainImage = mainImage;
     }
 
-    public Set<DocumentEntity> getImages(){
+    public List<Document> getImages(){
         return images;
     }
 
-    public void setImages(Set<DocumentEntity> images){
+    public void setImages(List<Document> images){
         this.images = images;
     }
 

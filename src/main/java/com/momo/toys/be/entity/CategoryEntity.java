@@ -1,5 +1,7 @@
 package com.momo.toys.be.entity;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -25,6 +28,17 @@ public class CategoryEntity extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "navigation_id", nullable = false)
     private NavigationEntity navigation;
+
+    @OneToMany(mappedBy = "categoryEntity")
+    private Set<ProductEntity> productEntity;
+
+    public Set<ProductEntity> getProductEntity(){
+        return productEntity;
+    }
+
+    public void setProductEntity(Set<ProductEntity> productEntity){
+        this.productEntity = productEntity;
+    }
 
     public Long getId(){
         return id;
