@@ -23,6 +23,14 @@ public class DocumentEntity extends BaseEntity {
     @Column(name = "file_size")
     private Long fileSize;
 
+    public ProductEntity getProduct(){
+        return product;
+    }
+
+    public void setProduct(ProductEntity product){
+        this.product = product;
+    }
+
     @ManyToOne
     @JoinColumn(name = "product_id")
     private ProductEntity product;

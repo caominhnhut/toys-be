@@ -21,7 +21,7 @@ public class ProductMapper{
         productEntity.setPrice(product.getPrice());
         productEntity.setDescription(product.getDescription());
         productEntity.setMainImage(product.getMainImage());
-        return null;
+        return productEntity;
     };
 
     public static final Function<com.momo.toys.be.product.Product, Product> mapToModel = product -> {

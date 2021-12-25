@@ -1,6 +1,7 @@
 package com.momo.toys.be.service.impl;
 
 import com.momo.toys.be.entity.DocumentEntity;
+import com.momo.toys.be.entity.ProductEntity;
 import com.momo.toys.be.exception.FileStorageException;
 import com.momo.toys.be.factory.mapper.DocumentMapper;
 import com.momo.toys.be.model.Document;
@@ -36,6 +37,25 @@ public class DocumentServiceImpl implements DocumentService {
 
         document.setFileUri(buildDownloadUri.apply(document.getFilename()));
         DocumentEntity documentEntity = DocumentMapper.mapToDocumentEntity.apply(document);
+
+        documentRepository.save(documentEntity);
+
+        document.setId(documentEntity.getId());
+        return document;
+    }
+
+    @Override
+    public Document upload(Document document, ProductEntity product) {
+
+        try {
+            storeDocumentService.store(document);
+        } catch (FileStorageException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
+
+        document.setFileUri(buildDownloadUri.apply(document.getFilename()));
+        DocumentEntity documentEntity = DocumentMapper.mapToDocumentEntity.apply(document);
+        documentEntity.setProduct(product);
 
         documentRepository.save(documentEntity);
 

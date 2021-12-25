@@ -49,19 +49,15 @@ public class ProductServiceImpl implements ProductService{
         ProductEntity productEntity = ProductMapper.mapToEntity.apply(product);
         CategoryEntity categoryEntity = categoryEntityOptional.get();
         productEntity.setCategoryEntity(categoryEntity);
-
-        Set<DocumentEntity> imagesEntity = new HashSet<>();
-        for(Document image : product.getImages()){
-            Document imageModel = documentService.upload(image);
-            DocumentEntity imageEntity = DocumentMapper.mapToDocumentEntity.apply(imageModel);
-            imagesEntity.add(imageEntity);
-        }
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        productEntity.setImages(imagesEntity);
         productEntity.setCreatedBy(authentication.getName());
         ProductEntity createdProduct = productRepository.save(productEntity);
+
+        for(Document image : product.getImages()){
+            Document imageModel = documentService.upload(image, createdProduct);
+        }
+
+
         return createdProduct.getId();
     }
 }
