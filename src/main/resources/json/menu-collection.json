@@ -1,6 +1,7 @@
 [
   {
     "name": "Đồ Chơi Gỗ",
+    "alias" : "wooden-toys",
     "categories": [
       {
         "name": "Đồ Chơi Bảng Tín"
@@ -18,6 +19,7 @@
   },
   {
     "name": "Đồ Chơi Nhựa",
+    "alias" : "plastic-toys",
     "categories": [
       {
         "name": "Xe Điều Khiển"
@@ -36,6 +38,63 @@
       },
       {
         "name": "Đồ Chơi Xúc Cát"
+      }
+    ]
+  },
+  {
+    "name": "Hatchimals",
+    "alias" : "hatchimals",
+    "categories": [
+      {
+        "name": "Hatchimals Rời"
+      },
+      {
+        "name": "Hatchimals Combo"
+      },
+      {
+        "name": "Hatchimals Đặc Biệt"
+      },
+      {
+        "name": "Hatchimals Theo Mùa"
+      },
+      {
+        "name": "Hatchimals Giỏ Trứng"
+      }
+    ]
+  },
+  {
+    "name": "Shopkins",
+    "alias" : "shopkins",
+    "categories": [
+      {
+        "name": "Shopkins Hoàng Gia"
+      },
+      {
+        "name": "Shopkins Túi"
+      },
+      {
+        "name": "Shopkins Combo"
+      },
+      {
+        "name": "Shopkins Theo Chủ Đề"
+      },
+      {
+        "name": "Shopkins Giỏ Trái Cây"
+      }
+    ]
+  },
+  {
+    "name": "Dụng Cụ Ăn Dặm",
+    "alias" : "weaning",
+    "categories": [
+      {
+        "name": "Bát Ăn Góm Sứ"
+      },
+      {
+        "name": "Muỗng Ăn Dặm"
+      },
+      {
+        "name": "Khay Ăn Dặm"
       }
     ]
   }

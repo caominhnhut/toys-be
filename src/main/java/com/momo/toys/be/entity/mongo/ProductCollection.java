@@ -1,19 +1,28 @@
 package com.momo.toys.be.entity.mongo;
 
-import com.momo.toys.be.enumeration.EnumColor;
-import com.momo.toys.be.enumeration.EnumTag;
-import com.momo.toys.be.model.DocumentMeta;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import com.momo.toys.be.enumeration.EntityStatus;
+import com.momo.toys.be.enumeration.EnumColor;
+import com.momo.toys.be.enumeration.EnumTag;
+import com.momo.toys.be.factory.ConstantUtility;
+import com.momo.toys.be.model.DocumentMeta;
 
 @Document(collection = "product")
-public class ProductCollection {
+public class ProductCollection{
 
     @Id
     private String id;
@@ -49,83 +58,118 @@ public class ProductCollection {
     @Field(value = "images")
     private List<DocumentMeta> images = new ArrayList<>();
 
-    public String getId() {
+    @Field(value = "status")
+    private EntityStatus status;
+
+    @DateTimeFormat(pattern = ConstantUtility.DATE_TIME_FORMAT)
+    @Field(value = "created_date")
+    private Date createdDate;
+
+    @DateTimeFormat(pattern = ConstantUtility.DATE_TIME_FORMAT)
+    @Field(value = "updated_date")
+    private Date updatedDate;
+
+    public String getId(){
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(String id){
         this.id = id;
     }
 
-    public String getCode() {
+    public String getCode(){
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(String code){
         this.code = code;
     }
 
-    public String getName() {
+    public String getName(){
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name){
         this.name = name;
     }
 
-    public BigDecimal getCostPrice() {
+    public BigDecimal getCostPrice(){
         return costPrice;
     }
 
-    public void setCostPrice(BigDecimal costPrice) {
+    public void setCostPrice(BigDecimal costPrice){
         this.costPrice = costPrice;
     }
 
-    public BigDecimal getPrice() {
+    public BigDecimal getPrice(){
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(BigDecimal price){
         this.price = price;
     }
 
-    public String getOwner() {
+    public String getOwner(){
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(String owner){
         this.owner = owner;
     }
 
-    public String getDescription() {
+    public String getDescription(){
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description){
         this.description = description;
     }
 
-    public int getAmount() {
+    public int getAmount(){
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(int amount){
         this.amount = amount;
     }
 
-    public EnumColor getColor() {
+    public EnumColor getColor(){
         return color;
     }
 
-    public void setColor(EnumColor color) {
+    public void setColor(EnumColor color){
         this.color = color;
     }
 
-    public List<EnumTag> getTags() {
+    public List<EnumTag> getTags(){
         return tags;
     }
 
-    public List<DocumentMeta> getImages() {
+    public List<DocumentMeta> getImages(){
         return images;
+    }
+
+    public EntityStatus getStatus(){
+        return status;
+    }
+
+    public void setStatus(EntityStatus status){
+        this.status = status;
+    }
+
+    public Date getCreatedDate(){
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate){
+        this.createdDate = createdDate;
+    }
+
+    public Date getUpdatedDate(){
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Date updatedDate){
+        this.updatedDate = updatedDate;
     }
 }
