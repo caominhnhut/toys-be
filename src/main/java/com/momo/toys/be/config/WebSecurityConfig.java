@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 import com.momo.toys.be.factory.CommonUtility;
 import com.momo.toys.be.factory.TokenHelper;
@@ -51,7 +52,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and().authorizeRequests()
                 .antMatchers(HttpMethod.GET,
