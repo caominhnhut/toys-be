@@ -30,14 +30,14 @@ public class CategoryEntity extends BaseEntity{
     private NavigationEntity navigation;
 
     @OneToMany(mappedBy = "categoryEntity")
-    private Set<ProductEntity> productEntity;
+    private Set<ProductEntity> productEntities;
 
-    public Set<ProductEntity> getProductEntity(){
-        return productEntity;
+    public Set<ProductEntity> getProductEntities(){
+        return productEntities;
     }
 
-    public void setProductEntity(Set<ProductEntity> productEntity){
-        this.productEntity = productEntity;
+    public void setProductEntities(Set<ProductEntity> productEntities){
+        this.productEntities = productEntities;
     }
 
     public Long getId(){

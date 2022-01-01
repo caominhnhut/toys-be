@@ -2,6 +2,8 @@ package com.momo.toys.be.factory.mapper;
 
 import com.momo.toys.be.entity.DocumentEntity;
 import com.momo.toys.be.model.Document;
+import com.momo.toys.be.product.Image;
+
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,5 +41,24 @@ public class DocumentMapper {
         documentEntity.setFileUri(document.getFileUri());
 
         return documentEntity;
+    };
+
+    public static Function<DocumentEntity,Document> mapEntityToDocument = documentEntity -> {
+
+        Document document = new Document();
+        document.setId(documentEntity.getId());
+        document.setFilename(documentEntity.getFilename());
+        document.setFileType(documentEntity.getFileType());
+        document.setFileSize(documentEntity.getFileSize());
+        document.setFileUri(documentEntity.getFileUri());
+
+        return document;
+    };
+
+    public static Function<Document, Image> mapModelToDto = documentModel ->{
+      Image image = new Image();
+      image.setId(documentModel.getId());
+      image.setUri(documentModel.getFileUri());
+        return image;
     };
 }

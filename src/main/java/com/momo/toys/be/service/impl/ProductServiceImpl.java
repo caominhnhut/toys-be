@@ -44,7 +44,7 @@ public class ProductServiceImpl implements ProductService{
             throw new NotFoundException(String.format("Category with id [%s] not found", product.getCategoryId()));
         }
 
-        ProductEntity productEntity = ProductMapper.mapToEntity.apply(product);
+        ProductEntity productEntity = ProductMapper.mapModelToEntity.apply(product);
         productEntity.setCategoryEntity(categoryEntityOptional.get());
         productEntity.setCreatedBy(accountService.getAuthorizedAccount().getName());
         productRepository.save(productEntity);

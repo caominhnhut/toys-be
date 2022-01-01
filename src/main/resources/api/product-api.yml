@@ -8,7 +8,7 @@ info:
 servers:
   - url: '{server}'
 paths:
-  /categories/{category-id}/product:
+  /categories/{category-id}/products:
     post:
       summary: Create a product
       description: The api is used for creating a new product.
@@ -37,6 +37,31 @@ paths:
         default:
           $ref: '#/components/responses/Problem'
 
+    get:
+      summary: Get all products of a category
+      description: The api is used for getting all products of a category.
+      operationId: getAllByCategory
+      tags:
+        - Product
+      parameters:
+        - $ref: '#/components/parameters/CategoryIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/ProductsList'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
 
 components:
 
@@ -65,6 +90,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ProductId'
+
+    ProductsList:
+      description: List products of a category.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProductsList'
 
     Problem:
       description: A generic problem response.
@@ -145,6 +177,37 @@ components:
           description: The product's main image.
           example: 'abc.jpg'
           type: string
+        images:
+          $ref: '#/components/schemas/Images'
+
+    Images:
+      description: A list of images.
+      type: array
+      items:
+        $ref: '#/components/schemas/Image'
+
+    Image:
+      description: An object which contains image uri and id.
+      required:
+        - id
+        - uri
+      properties:
+        id:
+          description: Image Id.
+          example: 123
+          type: integer
+          format: int64
+        uri:
+          description: Image uri.
+          example: /123/image.jpg
+          type: string
+
+
+    ProductsList:
+      description: List products of a category.
+      type: array
+      items:
+        $ref: '#/components/schemas/Product'
 
     Problem:
       description: A generic problem response describing a client or server problem.
