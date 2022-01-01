@@ -11,6 +11,8 @@ import com.momo.toys.be.repository.UserRepository;
 import com.momo.toys.be.service.AccountService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -61,6 +63,11 @@ public class AccountServiceImpl implements AccountService {
             }
         }
         throw new NotFoundException(String.format("Account with id [%s] not found", account.getId()));
+    }
+
+    @Override
+    public Authentication getAuthorizedAccount(){
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
     private UnaryOperator<List<Authority>> findAuthoritiesByName = authorities -> {

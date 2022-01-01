@@ -30,10 +30,8 @@ import com.momo.toys.be.service.ProductService;
 import com.momo.toys.be.validation.ValidationData;
 import com.momo.toys.be.validation.ValidationProvider;
 
-import javassist.NotFoundException;
-
 @RestController
-public class ProductController {
+public class ProductController{
 
     @Autowired
     private ValidationProvider validationProvider;
@@ -49,14 +47,14 @@ public class ProductController {
 
     @PostMapping("/categories/{category-id}/product")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_EMPLOYEE')")
-    public ResponseEntity create(@PathVariable("category-id") Long categoryId, @RequestPart("product") Product product, @RequestPart("files") List<MultipartFile> files) {
+    public ResponseEntity create(@PathVariable("category-id") Long categoryId, @RequestPart("product") Product product, @RequestPart("files") List<MultipartFile> files){
 
         Problem problem = validatorProductCreating.apply(product);
-        if (Strings.isNotEmpty(problem.getTitle())) {
+        if(Strings.isNotEmpty(problem.getTitle())){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }
 
-        for(MultipartFile file: files){
+        for(MultipartFile file : files){
             problem = validatorDocument.apply(file);
             if(Strings.isNotEmpty(problem.getTitle())){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
@@ -64,7 +62,7 @@ public class ProductController {
         }
 
         List<Document> images = new ArrayList<>();
-        for( MultipartFile multipartFile : files){
+        for(MultipartFile multipartFile : files){
             images.add(DocumentMapper.mapToDocument.apply(multipartFile));
         }
 
@@ -72,14 +70,12 @@ public class ProductController {
         productModel.setImages(images);
         productModel.setCategoryId(categoryId);
         try{
-            productService.create(productModel);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Successfully");
-        } catch(Exception e){
+            Long productId = productService.create(productModel);
+            return ResponseEntity.status(HttpStatus.CREATED).body(productId);
+        }catch(Exception e){
             Problem problemCategoryNotFound = commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemCategoryNotFound);
         }
-
-
     }
 
 
@@ -90,9 +86,9 @@ public class ProductController {
         ValidationData validationData = new ValidationData();
         validationData.setProductName(product.getName());
         validationData.setProductCode(product.getCode());
-        try {
+        try{
             validationProvider.executeValidators(validationData, PRODUCT_CREATION);
-        } catch (ValidationException e) {
+        }catch(ValidationException e){
             return commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
 
@@ -103,9 +99,9 @@ public class ProductController {
 
         ValidationData validationData = new ValidationData().setMultipartFile(multipartFile);
 
-        try {
+        try{
             validationProvider.executeValidators(validationData, DOCUMENT_UPLOADING);
-        } catch (ValidationException e) {
+        }catch(ValidationException e){
             return commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
 

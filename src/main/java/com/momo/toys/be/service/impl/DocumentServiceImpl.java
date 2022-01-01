@@ -1,6 +1,5 @@
 package com.momo.toys.be.service.impl;
 
-import java.util.Calendar;
 import java.util.function.UnaryOperator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.util.StringUtils;
 import com.momo.toys.be.entity.DocumentEntity;
 import com.momo.toys.be.entity.ProductEntity;
 import com.momo.toys.be.exception.FileStorageException;
+import com.momo.toys.be.factory.CommonUtility;
 import com.momo.toys.be.factory.mapper.DocumentMapper;
 import com.momo.toys.be.model.Document;
 import com.momo.toys.be.repository.DocumentRepository;
@@ -28,6 +28,9 @@ public class DocumentServiceImpl implements DocumentService{
 
     @Autowired
     private DocumentRepository documentRepository;
+
+    @Autowired
+    private CommonUtility commonUtility;
 
     private UnaryOperator<String> buildDownloadUri = filename -> downloadUri.concat(filename);
 
@@ -51,9 +54,9 @@ public class DocumentServiceImpl implements DocumentService{
 
     @Override
     public Document upload(Document document, ProductEntity product){
-        String fileExtension = StringUtils.getFilenameExtension(document.getFilename());
-        Long timeStamp = Calendar.getInstance().getTime().getTime();
-        document.setFilename(String.format("%s.%s", timeStamp, fileExtension));
+
+        String extension = StringUtils.getFilenameExtension(document.getFilename());
+        document.setFilename(commonUtility.uniqueFileName.apply(extension));
 
         try{
             storeDocumentService.store(document);
@@ -68,6 +71,7 @@ public class DocumentServiceImpl implements DocumentService{
         documentRepository.save(documentEntity);
 
         document.setId(documentEntity.getId());
+        
         return document;
     }
 

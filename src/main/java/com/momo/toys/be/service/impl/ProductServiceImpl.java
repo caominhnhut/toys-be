@@ -1,24 +1,19 @@
 package com.momo.toys.be.service.impl;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.momo.toys.be.entity.CategoryEntity;
-import com.momo.toys.be.entity.DocumentEntity;
 import com.momo.toys.be.entity.ProductEntity;
 import com.momo.toys.be.factory.CommonUtility;
-import com.momo.toys.be.factory.mapper.DocumentMapper;
 import com.momo.toys.be.factory.mapper.ProductMapper;
 import com.momo.toys.be.model.Document;
 import com.momo.toys.be.model.Product;
 import com.momo.toys.be.repository.CategoryRepository;
 import com.momo.toys.be.repository.ProductRepository;
+import com.momo.toys.be.service.AccountService;
 import com.momo.toys.be.service.DocumentService;
 import com.momo.toys.be.service.ProductService;
 
@@ -39,6 +34,9 @@ public class ProductServiceImpl implements ProductService{
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private AccountService accountService;
+
     @Override
     public Long create(Product product) throws NotFoundException{
         Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(product.getCategoryId());
@@ -47,17 +45,14 @@ public class ProductServiceImpl implements ProductService{
         }
 
         ProductEntity productEntity = ProductMapper.mapToEntity.apply(product);
-        CategoryEntity categoryEntity = categoryEntityOptional.get();
-        productEntity.setCategoryEntity(categoryEntity);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        productEntity.setCreatedBy(authentication.getName());
-        ProductEntity createdProduct = productRepository.save(productEntity);
+        productEntity.setCategoryEntity(categoryEntityOptional.get());
+        productEntity.setCreatedBy(accountService.getAuthorizedAccount().getName());
+        productRepository.save(productEntity);
 
         for(Document image : product.getImages()){
-            Document imageModel = documentService.upload(image, createdProduct);
+            documentService.upload(image, productEntity);
         }
 
-
-        return createdProduct.getId();
+        return productEntity.getId();
     }
 }
