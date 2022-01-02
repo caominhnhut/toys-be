@@ -1,13 +1,21 @@
 package com.momo.toys.be.service.impl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.momo.toys.be.entity.CategoryEntity;
 import com.momo.toys.be.entity.ProductEntity;
 import com.momo.toys.be.factory.CommonUtility;
+import com.momo.toys.be.factory.mapper.DocumentMapper;
 import com.momo.toys.be.factory.mapper.ProductMapper;
 import com.momo.toys.be.model.Document;
 import com.momo.toys.be.model.Product;
@@ -54,5 +62,31 @@ public class ProductServiceImpl implements ProductService{
         }
 
         return productEntity.getId();
+    }
+
+    @Override
+    public Set<Product> findByCategory(Long categoryId, int offset, int limit){
+
+        /**
+         * 7
+         * (index-1)*limit
+         * oder by created_date: 7,6,5,4,3,2,1
+         * index = 0, limit = 3 -> (7,6,5)
+         * index = 1, limit = 3 -> (4,3,2)
+         * index = 2, limit = 3 -> (1)
+         */
+
+        Sort sortable = Sort.by("createdDate").descending();
+
+        Pageable pageable = PageRequest.of(offset, limit, sortable);
+
+        Page<ProductEntity> productEntities = productRepository.findByCategory(categoryId, pageable);
+
+        return productEntities.stream().map(productEntity -> {
+            Product productModel = ProductMapper.mapEntityToModel.apply(productEntity);
+            List<Document> documents = productEntity.getImages().stream().map(DocumentMapper.mapEntityToDocument).collect(Collectors.toList());
+            productModel.setImages(documents);
+            return productModel;
+        }).collect(Collectors.toSet());
     }
 }

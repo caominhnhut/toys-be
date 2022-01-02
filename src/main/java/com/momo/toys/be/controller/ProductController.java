@@ -4,6 +4,7 @@ import static com.momo.toys.be.enumeration.SupportedType.DOCUMENT_UPLOADING;
 import static com.momo.toys.be.enumeration.SupportedType.PRODUCT_CREATION;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -17,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -87,14 +89,12 @@ public class ProductController{
     }
 
     @GetMapping("/no-auth/categories/{category-id}/products")
-    public ResponseEntity getAllByCategory(@PathVariable("category-id") Long categoryId){
+    public ResponseEntity findByCategory(@PathVariable("category-id") Long categoryId, @RequestParam("offset") int offset, @RequestParam("limit") int limit){
 
-        Set<com.momo.toys.be.model.Product> productModels;
-        try{
-            productModels = categoryService.getAllProductsByCategory(categoryId);
-        }catch(Exception e){
-            Problem problemCategoryNotFound = commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemCategoryNotFound);
+        Set<com.momo.toys.be.model.Product> productModels = productService.findByCategory(categoryId, offset, limit);
+
+        if(productModels.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Collections.emptySet());
         }
 
         Set<Product> products = productModels.stream().map(buildFromModel).collect(Collectors.toSet());
