@@ -27,12 +27,16 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public Set<Product> getAllProductsByCategory(Long categoryId) throws NotFoundException{
+
         Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(categoryId);
+
         if(!categoryEntityOptional.isPresent()){
             throw new NotFoundException(String.format("Category with id [%s] not found", categoryId));
         }
+
         CategoryEntity categoryEntity = categoryEntityOptional.get();
         Set<ProductEntity> productEntities = categoryEntity.getProductEntities();
+
         return productEntities.stream().map(productEntity -> {
             Product productModel = ProductMapper.mapEntityToModel.apply(productEntity);
             List<Document> documents = productEntity.getImages().stream().map(DocumentMapper.mapEntityToDocument).collect(Collectors.toList());

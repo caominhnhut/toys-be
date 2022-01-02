@@ -89,22 +89,29 @@ public class ProductController{
     @GetMapping("/no-auth/categories/{category-id}/products")
     public ResponseEntity getAllByCategory(@PathVariable("category-id") Long categoryId){
 
+        Set<com.momo.toys.be.model.Product> productModels;
         try{
-            Set<com.momo.toys.be.model.Product> productModels = categoryService.getAllProductsByCategory(categoryId);
-            Set<Product> products = productModels.stream().map(productModel ->{
-                Product product= ProductMapper.mapModelToDto.apply(productModel);
-                List<Image> images= productModel.getImages().stream().map(imageModel->{
-                    return DocumentMapper.mapModelToDto.apply(imageModel);
-                }).collect(Collectors.toList());
-                product.setImages(images);
-                return product;
-            }).collect(Collectors.toSet());
-            return ResponseEntity.status(HttpStatus.OK).body(products);
+            productModels = categoryService.getAllProductsByCategory(categoryId);
         }catch(Exception e){
             Problem problemCategoryNotFound = commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemCategoryNotFound);
         }
+
+        Set<Product> products = productModels.stream().map(buildFromModel).collect(Collectors.toSet());
+
+        return ResponseEntity.status(HttpStatus.OK).body(products);
     }
+
+    private Function<com.momo.toys.be.model.Product, Product> buildFromModel = productModel -> {
+
+        Product product = ProductMapper.mapModelToDto.apply(productModel);
+
+        List<Image> images = productModel.getImages().stream().map(imageModel -> DocumentMapper.mapModelToDto.apply(imageModel)).collect(Collectors.toList());
+
+        product.setImages(images);
+
+        return product;
+    };
 
     private Function<Product, Problem> validatorProductCreating = product -> {
 
