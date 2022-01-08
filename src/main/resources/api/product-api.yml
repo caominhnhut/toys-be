@@ -63,6 +63,36 @@ paths:
         default:
           $ref: '#/components/responses/Problem'
 
+  /categories/{category-id}/products/{product-id}:
+    put:
+      summary: Update a product
+      description: The api is used for update a product.
+      operationId: updateProduct
+      tags:
+        - Product
+      requestBody:
+        $ref: '#/components/requestBodies/Product'
+      parameters:
+        - $ref: '#/components/parameters/CategoryIdPathParam'
+        - $ref: '#/components/parameters/ProductIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/ProductId'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
 components:
 
   headers:
@@ -113,10 +143,18 @@ components:
       description: The identification of a category
       required: true
       schema:
-        $ref: '#/components/schemas/categoryId'
+        $ref: '#/components/schemas/CategoryId'
+
+    ProductIdPathParam:
+      name: product-id
+      in: path
+      description: The identification of a product
+      required: true
+      schema:
+        $ref: '#/components/schemas/ProductId'
 
   schemas:
-    categoryId:
+    CategoryId:
       description: The identification of a category.
       required:
         - id

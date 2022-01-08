@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -101,6 +102,43 @@ public class ProductController{
 
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
+
+    @PutMapping("/categories/{category-id}/products/{product-id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_EMPLOYEE')")
+    public ResponseEntity update(@PathVariable("category-id") Long categoryId, @PathVariable("product-id") Long productId, @RequestPart("product") Product product, @RequestPart("files") List<MultipartFile> files){
+
+        Problem problem = validatorProductCreating.apply(product);
+        if(Strings.isNotEmpty(problem.getTitle())){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
+        }
+
+        for(MultipartFile file : files){
+            problem = validatorDocument.apply(file);
+            if(Strings.isNotEmpty(problem.getTitle())){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
+            }
+        }
+
+
+        List<Document> images = new ArrayList<>();
+        for(MultipartFile multipartFile : files){
+            images.add(DocumentMapper.mapToDocument.apply(multipartFile));
+        }
+
+        com.momo.toys.be.model.Product productModel = ProductMapper.mapDtoToModel.apply(product);
+        productModel.setImages(images);
+        productModel.setCategoryId(categoryId);
+        productModel.setId(productId);
+        try{
+            productService.update(productModel);
+            return ResponseEntity.status(HttpStatus.OK).body(productId);
+        }catch(Exception e){
+            Problem problemProductNotFound = commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemProductNotFound);
+        }
+
+    }
+
 
     private Function<com.momo.toys.be.model.Product, Product> buildFromModel = productModel -> {
 

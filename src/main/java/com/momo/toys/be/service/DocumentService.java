@@ -11,4 +11,6 @@ public interface DocumentService {
     Document upload(Document document, ProductEntity productId);
 
     Document readFile(String filename) throws FileStorageException;
+
+    void delete(Document document) throws FileStorageException;
 }

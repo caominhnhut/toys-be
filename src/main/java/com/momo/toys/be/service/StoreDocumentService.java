@@ -7,5 +7,7 @@ public interface StoreDocumentService {
 
     void store(Document document) throws FileStorageException;
 
+    void delete(Document document) throws FileStorageException;
+
     byte[] load(String filename) throws FileStorageException;
 }

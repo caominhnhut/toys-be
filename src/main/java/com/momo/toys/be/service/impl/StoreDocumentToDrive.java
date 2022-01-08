@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -21,14 +22,28 @@ public class StoreDocumentToDrive implements StoreDocumentService {
 
     @Override
     public void store(Document document) throws FileStorageException {
-        Path path = Paths.get(String.format("%s\\%s", filePath, document.getFilename()));
-
+        Path path = Paths.get(filePath.concat(document.getFilename()));
+        System.out.println("==>"+path);
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(document.getFileContent());
             Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
             throw new FileStorageException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void delete(Document document) throws FileStorageException{
+        Path path = Paths.get(String.format("%s\\%s", filePath, document.getFilename()));
+        try{
+            // Delete file
+            Files.delete(path);
+            System.out.println("File or directory deleted successfully");
+        }catch(NoSuchFileException ex){
+            System.out.printf("No such file or directory: %s\n", path);
+        }catch(IOException ex){
+            System.out.println(ex);
         }
     }
 
@@ -41,4 +56,6 @@ public class StoreDocumentToDrive implements StoreDocumentService {
             throw new FileStorageException(e.getMessage());
         }
     }
+
+
 }

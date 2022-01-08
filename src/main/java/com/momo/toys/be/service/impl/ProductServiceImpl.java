@@ -13,7 +13,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.momo.toys.be.entity.CategoryEntity;
+import com.momo.toys.be.entity.DocumentEntity;
 import com.momo.toys.be.entity.ProductEntity;
+import com.momo.toys.be.exception.FileStorageException;
 import com.momo.toys.be.factory.CommonUtility;
 import com.momo.toys.be.factory.mapper.DocumentMapper;
 import com.momo.toys.be.factory.mapper.ProductMapper;
@@ -62,6 +64,44 @@ public class ProductServiceImpl implements ProductService{
         }
 
         return productEntity.getId();
+    }
+
+    @Override
+    public Long update(Product product) throws NotFoundException, FileStorageException{
+        Optional<ProductEntity> existingProductEntityOptional = productRepository.findById(product.getId());
+        if(!existingProductEntityOptional.isPresent()){
+            throw new NotFoundException(String.format("Product with id [%s] not found", product.getId()));
+        }
+        ProductEntity productEntity = existingProductEntityOptional.get();
+        productEntity.setName(product.getName());
+        productEntity.setCode(product.getCode());
+        productEntity.setAmount(product.getAmount());
+        productEntity.setCostPrice(product.getCostPrice());
+        productEntity.setPrice(product.getPrice());
+        productEntity.setDescription(product.getDescription());
+        // TODO: update this one
+        productEntity.setMainImage(product.getMainImage());
+        productRepository.save(productEntity);
+
+        List<Document> images = product.getImages();
+        if(images.isEmpty()){
+            return productEntity.getId();
+        }
+
+//        // Delete existing images
+//        Set<DocumentEntity> existingImages = productEntity.getImages();
+//        for(DocumentEntity imageEntity : existingImages){
+//            Document image = DocumentMapper.mapEntityToDocument.apply(imageEntity);
+//            documentService.delete(image);
+//        }
+//
+//        // Upload new images
+//        for(Document image : images){
+//            documentService.upload(image, productEntity);
+//        }
+
+        return productEntity.getId();
+
     }
 
     @Override

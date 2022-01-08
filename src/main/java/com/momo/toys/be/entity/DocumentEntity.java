@@ -17,7 +17,7 @@ public class DocumentEntity extends BaseEntity {
     @Column(name = "file_type")
     private String fileType;
 
-    @Column(name = "file_uir")
+    @Column(name = "file_uri")
     private String fileUri;
 
     @Column(name = "file_size")

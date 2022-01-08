@@ -2,8 +2,8 @@
   "name": "Bang Tinh Soroban",
   "code": "BTSB01",
   "description": "Bang Tinh Soroban",
-  "ostPrice": 250000,
+  "costPrice": 250000,
   "price": 270000,
   "amount": 50,
-  "mainImage": "1.jpg"
+  "mainImage": "1641635445349.jpg"
 }

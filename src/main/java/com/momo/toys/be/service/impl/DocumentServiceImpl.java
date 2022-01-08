@@ -71,7 +71,7 @@ public class DocumentServiceImpl implements DocumentService{
         documentRepository.save(documentEntity);
 
         document.setId(documentEntity.getId());
-        
+
         return document;
     }
 
@@ -83,5 +83,16 @@ public class DocumentServiceImpl implements DocumentService{
         document.setFileContent(content);
 
         return document;
+    }
+
+    @Override
+    public void delete(Document document) throws FileStorageException{
+
+        // Delete physical file
+        storeDocumentService.delete(document);
+
+        // Delete record in document table
+        documentRepository.deleteById(document.getId());
+
     }
 }
