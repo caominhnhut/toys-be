@@ -54,11 +54,25 @@ public class ProductServiceImpl implements ProductService{
             throw new NotFoundException(String.format("Category with id [%s] not found", product.getCategoryId()));
         }
 
+        /*
+        stream
+        loop product.getImages() -> element{
+            string originalName = element.getName
+            string uniname = buildUniqueName(originalName)
+            element.setName(uniname)
+            if(originalName == product.getMainName){
+                product.setMainName(uniname)
+            }
+        }
+
+         */
+
         ProductEntity productEntity = ProductMapper.mapModelToEntity.apply(product);
         productEntity.setCategoryEntity(categoryEntityOptional.get());
         productEntity.setCreatedBy(accountService.getAuthorizedAccount().getName());
         productRepository.save(productEntity);
 
+        //TODO: stream
         for(Document image : product.getImages()){
             documentService.upload(image, productEntity);
         }
