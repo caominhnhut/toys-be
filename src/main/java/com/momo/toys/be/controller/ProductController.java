@@ -56,6 +56,46 @@ public class ProductController{
     @Autowired
     private CategoryService categoryService;
 
+    private Function<com.momo.toys.be.model.Product, Product> buildFromModel = productModel -> {
+
+        Product product = ProductMapper.mapModelToDto.apply(productModel);
+
+        List<Image> images = productModel.getImages().stream().map(imageModel -> DocumentMapper.mapModelToDto.apply(imageModel)).collect(Collectors.toList());
+
+        product.setImages(images);
+
+        return product;
+    };
+
+    private Function<Product, Problem> validatorProductCreating = product -> {
+
+        Problem problem = new Problem();
+
+        ValidationData validationData = new ValidationData();
+        validationData.setProductName(product.getName());
+        validationData.setProductCode(product.getCode());
+        try{
+            validationProvider.executeValidators(validationData, PRODUCT_CREATION);
+        }catch(ValidationException e){
+            return commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        }
+
+        return problem;
+    };
+
+    private Function<MultipartFile, Problem> validatorDocument = multipartFile -> {
+
+        ValidationData validationData = new ValidationData().setMultipartFile(multipartFile);
+
+        try{
+            validationProvider.executeValidators(validationData, DOCUMENT_UPLOADING);
+        }catch(ValidationException e){
+            return commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        }
+
+        return new Problem();
+    };
+
     @PostMapping("/categories/{category-id}/products")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity create(@PathVariable("category-id") Long categoryId, @RequestPart("product") Product product, @RequestPart("files") List<MultipartFile> files){
@@ -105,27 +145,28 @@ public class ProductController{
 
     @PutMapping("/categories/{category-id}/products/{product-id}")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_EMPLOYEE')")
-    public ResponseEntity update(@PathVariable("category-id") Long categoryId, @PathVariable("product-id") Long productId, @RequestPart("product") Product product, @RequestPart("files") List<MultipartFile> files){
+    public ResponseEntity update(@PathVariable("category-id") Long categoryId, @PathVariable("product-id") Long productId, @RequestPart("product") Product product, @RequestPart(value = "files", required = false) List<MultipartFile> files){
 
         Problem problem = validatorProductCreating.apply(product);
         if(Strings.isNotEmpty(problem.getTitle())){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }
 
-        for(MultipartFile file : files){
-            problem = validatorDocument.apply(file);
-            if(Strings.isNotEmpty(problem.getTitle())){
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
+        List<Document> images = new ArrayList<>();
+        if(files != null){
+            for(MultipartFile file : files){
+                problem = validatorDocument.apply(file);
+                if(Strings.isNotEmpty(problem.getTitle())){
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
+                }
+            }
+            for(MultipartFile multipartFile : files){
+                images.add(DocumentMapper.mapToDocument.apply(multipartFile));
             }
         }
 
-
-        List<Document> images = new ArrayList<>();
-        for(MultipartFile multipartFile : files){
-            images.add(DocumentMapper.mapToDocument.apply(multipartFile));
-        }
-
         com.momo.toys.be.model.Product productModel = ProductMapper.mapDtoToModel.apply(product);
+
         productModel.setImages(images);
         productModel.setCategoryId(categoryId);
         productModel.setId(productId);
@@ -138,45 +179,4 @@ public class ProductController{
         }
 
     }
-
-
-    private Function<com.momo.toys.be.model.Product, Product> buildFromModel = productModel -> {
-
-        Product product = ProductMapper.mapModelToDto.apply(productModel);
-
-        List<Image> images = productModel.getImages().stream().map(imageModel -> DocumentMapper.mapModelToDto.apply(imageModel)).collect(Collectors.toList());
-
-        product.setImages(images);
-
-        return product;
-    };
-
-    private Function<Product, Problem> validatorProductCreating = product -> {
-
-        Problem problem = new Problem();
-
-        ValidationData validationData = new ValidationData();
-        validationData.setProductName(product.getName());
-        validationData.setProductCode(product.getCode());
-        try{
-            validationProvider.executeValidators(validationData, PRODUCT_CREATION);
-        }catch(ValidationException e){
-            return commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
-        }
-
-        return problem;
-    };
-
-    private Function<MultipartFile, Problem> validatorDocument = multipartFile -> {
-
-        ValidationData validationData = new ValidationData().setMultipartFile(multipartFile);
-
-        try{
-            validationProvider.executeValidators(validationData, DOCUMENT_UPLOADING);
-        }catch(ValidationException e){
-            return commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
-        }
-
-        return new Problem();
-    };
 }

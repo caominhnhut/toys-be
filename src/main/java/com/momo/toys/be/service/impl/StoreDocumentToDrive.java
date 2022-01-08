@@ -35,7 +35,7 @@ public class StoreDocumentToDrive implements StoreDocumentService {
 
     @Override
     public void delete(Document document) throws FileStorageException{
-        Path path = Paths.get(String.format("%s\\%s", filePath, document.getFilename()));
+        Path path = Paths.get(filePath.concat(document.getFilename()));
         try{
             // Delete file
             Files.delete(path);

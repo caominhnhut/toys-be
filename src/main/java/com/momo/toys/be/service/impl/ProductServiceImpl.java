@@ -89,26 +89,32 @@ public class ProductServiceImpl implements ProductService{
         productEntity.setCostPrice(product.getCostPrice());
         productEntity.setPrice(product.getPrice());
         productEntity.setDescription(product.getDescription());
-        // TODO: update this one
-        productEntity.setMainImage(product.getMainImage());
-        productRepository.save(productEntity);
 
         List<Document> images = product.getImages();
         if(images.isEmpty()){
+            productRepository.save(productEntity);
             return productEntity.getId();
         }
 
-//        // Delete existing images
-//        Set<DocumentEntity> existingImages = productEntity.getImages();
-//        for(DocumentEntity imageEntity : existingImages){
-//            Document image = DocumentMapper.mapEntityToDocument.apply(imageEntity);
-//            documentService.delete(image);
-//        }
-//
-//        // Upload new images
-//        for(Document image : images){
-//            documentService.upload(image, productEntity);
-//        }
+        // Delete existing images
+        Set<DocumentEntity> existingImages = productEntity.getImages();
+        for(DocumentEntity imageEntity : existingImages){
+            Document image = DocumentMapper.mapEntityToDocument.apply(imageEntity);
+            documentService.delete(image);
+        }
+
+        // Upload new images
+        for(Document image : images){
+            String extension = StringUtils.getFilenameExtension(image.getFilename());
+            String uniqueName = commonUtility.uniqueFileName.apply(extension);
+            if(image.getFilename().equals(product.getMainImage())){
+                productEntity.setMainImage(uniqueName);
+            }
+            image.setFilename(uniqueName);
+            documentService.upload(image, productEntity);
+        }
+
+        productRepository.save(productEntity);
 
         return productEntity.getId();
 
