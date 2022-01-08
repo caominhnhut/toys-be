@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.momo.toys.be.entity.CategoryEntity;
 import com.momo.toys.be.entity.DocumentEntity;
@@ -54,25 +55,20 @@ public class ProductServiceImpl implements ProductService{
             throw new NotFoundException(String.format("Category with id [%s] not found", product.getCategoryId()));
         }
 
-        /*
-        stream
-        loop product.getImages() -> element{
-            string originalName = element.getName
-            string uniname = buildUniqueName(originalName)
-            element.setName(uniname)
-            if(originalName == product.getMainName){
-                product.setMainName(uniname)
+        for(Document image : product.getImages()){
+            String extension = StringUtils.getFilenameExtension(image.getFilename());
+            String uniqueName = commonUtility.uniqueFileName.apply(extension);
+            if(image.getFilename().equals(product.getMainImage())){
+                product.setMainImage(uniqueName);
             }
+            image.setFilename(uniqueName);
         }
-
-         */
 
         ProductEntity productEntity = ProductMapper.mapModelToEntity.apply(product);
         productEntity.setCategoryEntity(categoryEntityOptional.get());
         productEntity.setCreatedBy(accountService.getAuthorizedAccount().getName());
         productRepository.save(productEntity);
 
-        //TODO: stream
         for(Document image : product.getImages()){
             documentService.upload(image, productEntity);
         }

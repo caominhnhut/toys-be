@@ -55,10 +55,6 @@ public class DocumentServiceImpl implements DocumentService{
     @Override
     public Document upload(Document document, ProductEntity product){
 
-        // TODO: move 2 lines to controller
-        String extension = StringUtils.getFilenameExtension(document.getFilename());
-        document.setFilename(commonUtility.uniqueFileName.apply(extension));
-
         try{
             storeDocumentService.store(document);
         }catch(FileStorageException e){
