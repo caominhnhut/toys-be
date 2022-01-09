@@ -1,5 +1,6 @@
 package com.momo.toys.be.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -92,18 +93,10 @@ public class ProductServiceImpl implements ProductService{
 
         List<Document> images = product.getImages();
         if(images.isEmpty()){
-            productRepository.save(productEntity);
             return productEntity.getId();
         }
 
-        // Delete existing images
-        Set<DocumentEntity> existingImages = productEntity.getImages();
-        for(DocumentEntity imageEntity : existingImages){
-            Document image = DocumentMapper.mapEntityToDocument.apply(imageEntity);
-            documentService.delete(image);
-        }
-
-        // Upload new images
+        List<String> newUniqueNames = new ArrayList<>();
         for(Document image : images){
             String extension = StringUtils.getFilenameExtension(image.getFilename());
             String uniqueName = commonUtility.uniqueFileName.apply(extension);
@@ -111,10 +104,23 @@ public class ProductServiceImpl implements ProductService{
                 productEntity.setMainImage(uniqueName);
             }
             image.setFilename(uniqueName);
+            newUniqueNames.add(uniqueName);
             documentService.upload(image, productEntity);
         }
 
         productRepository.save(productEntity);
+
+        // Delete existing images
+        Set<DocumentEntity> existingImages = productEntity.getImages();
+        for(DocumentEntity imageEntity : existingImages){
+
+            if(newUniqueNames.contains(imageEntity.getFilename())){
+                continue;
+            }
+
+            Document image = DocumentMapper.mapEntityToDocument.apply(imageEntity);
+            documentService.delete(image);
+        }
 
         return productEntity.getId();
 
