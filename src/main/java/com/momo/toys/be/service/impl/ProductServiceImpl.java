@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,20 +80,19 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Long update(Product product) throws NotFoundException, FileStorageException{
+
         Optional<ProductEntity> existingProductEntityOptional = productRepository.findById(product.getId());
+
         if(!existingProductEntityOptional.isPresent()){
             throw new NotFoundException(String.format("Product with id [%s] not found", product.getId()));
         }
+
         ProductEntity productEntity = existingProductEntityOptional.get();
-        productEntity.setName(product.getName());
-        productEntity.setCode(product.getCode());
-        productEntity.setAmount(product.getAmount());
-        productEntity.setCostPrice(product.getCostPrice());
-        productEntity.setPrice(product.getPrice());
-        productEntity.setDescription(product.getDescription());
+        convertFromModelToEntity.accept(product, productEntity);
 
         List<Document> images = product.getImages();
-        if(images.isEmpty()){
+        if(images == null || images.isEmpty()){
+            productRepository.save(productEntity);
             return productEntity.getId();
         }
 
@@ -123,20 +123,10 @@ public class ProductServiceImpl implements ProductService{
         }
 
         return productEntity.getId();
-
     }
 
     @Override
     public Set<Product> findByCategory(Long categoryId, int offset, int limit){
-
-        /**
-         * 7
-         * (index-1)*limit
-         * oder by created_date: 7,6,5,4,3,2,1
-         * index = 0, limit = 3 -> (7,6,5)
-         * index = 1, limit = 3 -> (4,3,2)
-         * index = 2, limit = 3 -> (1)
-         */
 
         Sort sortable = Sort.by("createdDate").descending();
 
@@ -151,4 +141,13 @@ public class ProductServiceImpl implements ProductService{
             return productModel;
         }).collect(Collectors.toSet());
     }
+
+    private BiConsumer<Product, ProductEntity> convertFromModelToEntity = (product, productEntity) -> {
+        productEntity.setName(product.getName());
+        productEntity.setCode(product.getCode());
+        productEntity.setAmount(product.getAmount());
+        productEntity.setCostPrice(product.getCostPrice());
+        productEntity.setPrice(product.getPrice());
+        productEntity.setDescription(product.getDescription());
+    };
 }

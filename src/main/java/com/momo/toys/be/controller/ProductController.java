@@ -3,7 +3,6 @@ package com.momo.toys.be.controller;
 import static com.momo.toys.be.enumeration.SupportedType.DOCUMENT_UPLOADING;
 import static com.momo.toys.be.enumeration.SupportedType.PRODUCT_CREATION;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -98,28 +97,29 @@ public class ProductController{
 
     @PostMapping("/categories/{category-id}/products")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_EMPLOYEE')")
-    public ResponseEntity create(@PathVariable("category-id") Long categoryId, @RequestPart("product") Product product, @RequestPart("files") List<MultipartFile> files){
+    public ResponseEntity create(@PathVariable("category-id") Long categoryId, @RequestPart("product") Product product, @RequestPart(value = "files", required = false) List<MultipartFile> files){
 
         Problem problem = validatorProductCreating.apply(product);
         if(Strings.isNotEmpty(problem.getTitle())){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }
 
-        for(MultipartFile file : files){
-            problem = validatorDocument.apply(file);
-            if(Strings.isNotEmpty(problem.getTitle())){
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
-            }
-        }
-
-        List<Document> images = new ArrayList<>();
-        for(MultipartFile multipartFile : files){
-            images.add(DocumentMapper.mapToDocument.apply(multipartFile));
-        }
-
         com.momo.toys.be.model.Product productModel = ProductMapper.mapDtoToModel.apply(product);
-        productModel.setImages(images);
+
+        if(files != null){
+            for(MultipartFile file : files){
+                problem = validatorDocument.apply(file);
+                if(Strings.isNotEmpty(problem.getTitle())){
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
+                }
+            }
+
+            List<Document> images = files.stream().map(DocumentMapper.mapToDocument).collect(Collectors.toList());
+            productModel.setImages(images);
+        }
+
         productModel.setCategoryId(categoryId);
+
         try{
             Long productId = productService.create(productModel);
             return ResponseEntity.status(HttpStatus.CREATED).body(productId);
@@ -152,7 +152,8 @@ public class ProductController{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }
 
-        List<Document> images = new ArrayList<>();
+        com.momo.toys.be.model.Product productModel = ProductMapper.mapDtoToModel.apply(product);
+
         if(files != null){
             for(MultipartFile file : files){
                 problem = validatorDocument.apply(file);
@@ -160,16 +161,14 @@ public class ProductController{
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
                 }
             }
-            for(MultipartFile multipartFile : files){
-                images.add(DocumentMapper.mapToDocument.apply(multipartFile));
-            }
+
+            List<Document> images = files.stream().map(DocumentMapper.mapToDocument).collect(Collectors.toList());
+            productModel.setImages(images);
         }
 
-        com.momo.toys.be.model.Product productModel = ProductMapper.mapDtoToModel.apply(product);
-
-        productModel.setImages(images);
         productModel.setCategoryId(categoryId);
         productModel.setId(productId);
+
         try{
             productService.update(productModel);
             return ResponseEntity.status(HttpStatus.OK).body(productId);
@@ -177,6 +176,5 @@ public class ProductController{
             Problem problemProductNotFound = commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemProductNotFound);
         }
-
     }
 }
