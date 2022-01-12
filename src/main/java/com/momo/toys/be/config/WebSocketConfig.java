@@ -1,5 +1,6 @@
 package com.momo.toys.be.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -10,10 +11,15 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 
+    @Value("${cors.allowed.domain}")
+    private String allowedDomain;
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // chat client will use this to connect to the server
-        registry.addEndpoint("/no-auth/ws-chat").withSockJS();
+        registry.addEndpoint("/no-auth/ws-chat")
+                .setAllowedOrigins(allowedDomain)
+                .withSockJS();
     }
 
     @Override
