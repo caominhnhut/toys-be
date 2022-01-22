@@ -2,12 +2,8 @@ package com.momo.toys.be.entity.mongo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -16,7 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.momo.toys.be.enumeration.EntityStatus;
-import com.momo.toys.be.enumeration.EnumColor;
 import com.momo.toys.be.enumeration.EnumTag;
 import com.momo.toys.be.factory.ConstantUtility;
 import com.momo.toys.be.model.DocumentMeta;
@@ -48,9 +43,6 @@ public class ProductCollection{
 
     @Field(value = "price")
     private BigDecimal price;
-
-    @Field(value = "color")
-    private EnumColor color;
 
     @Field(value = "tags")
     private List<EnumTag> tags = new ArrayList<>();
@@ -131,14 +123,6 @@ public class ProductCollection{
 
     public void setAmount(int amount){
         this.amount = amount;
-    }
-
-    public EnumColor getColor(){
-        return color;
-    }
-
-    public void setColor(EnumColor color){
-        this.color = color;
     }
 
     public List<EnumTag> getTags(){

@@ -1,14 +1,11 @@
 {
-    "id": null,
     "code": "W001",
-    "name": "Xe Kéo Hình Khối",
-    "onwer": null,
+    "name": "Sâu Gỗ",
     "description": "Sản phẩm chất lượng tuyệt vời",
-    "imageName": "c.jpg",
+    "imageName": "mine.jpg",
     "amount": 7,
     "costPrice": 100000,
     "price": 150000,
-    "images": [],
     "tags": [
         "NEW"
     ]

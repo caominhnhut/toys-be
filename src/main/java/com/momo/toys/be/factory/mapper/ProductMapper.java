@@ -1,41 +1,42 @@
 package com.momo.toys.be.factory.mapper;
 
-import com.momo.toys.be.entity.mongo.ProductCollection;
-import com.momo.toys.be.model.Document;
-import com.momo.toys.be.model.Product;
-import com.momo.toys.be.product.EnumTag;
-import com.momo.toys.be.product.FileData;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ProductMapper {
+import org.springframework.web.multipart.MultipartFile;
 
-    private ProductMapper() {
+import com.momo.toys.be.entity.mongo.ProductCollection;
+import com.momo.toys.be.model.Document;
+import com.momo.toys.be.model.Product;
+import com.momo.toys.be.product.EnumTag;
+import com.momo.toys.be.product.FileData;
+
+public class ProductMapper{
+
+    private ProductMapper(){
         // hide constructor
     }
 
     private static BiConsumer<List<EnumTag>, Product> mapToProductModelTags = (tagsDto, product) -> {
 
-        if (tagsDto.isEmpty()) {
+        if(tagsDto.isEmpty()){
             return;
         }
 
-        for (EnumTag tagDto : tagsDto) {
+        for(EnumTag tagDto : tagsDto){
             product.getTags().add(com.momo.toys.be.enumeration.EnumTag.valueOf(tagDto.toString()));
         }
     };
 
     private static BiConsumer<List<com.momo.toys.be.enumeration.EnumTag>, com.momo.toys.be.product.Product> mapToProductDtoTags = (tagsModel, product) -> {
 
-        if (tagsModel.isEmpty()) {
+        if(tagsModel.isEmpty()){
             return;
         }
 
-        for (com.momo.toys.be.enumeration.EnumTag tagModel : tagsModel) {
+        for(com.momo.toys.be.enumeration.EnumTag tagModel : tagsModel){
             product.getTags().add(EnumTag.valueOf(tagModel.toString()));
         }
     };
@@ -57,7 +58,7 @@ public class ProductMapper {
     };
 
     public static BiConsumer<MultipartFile[], Product> mapImages = (images, product) -> {
-        for (MultipartFile image : images) {
+        for(MultipartFile image : images){
             Document document = DocumentMapper.mapToDocument.apply(image);
             product.getImages().add(document);
         }
@@ -73,7 +74,6 @@ public class ProductMapper {
         productCollection.setAmount(product.getAmount());
         productCollection.setCostPrice(product.getCostPrice());
         productCollection.setPrice(product.getPrice());
-        productCollection.setColor(product.getColor());
         productCollection.getTags().addAll(product.getTags());
 
         return productCollection;
@@ -90,7 +90,6 @@ public class ProductMapper {
         product.setAmount(productCollection.getAmount());
         product.setCostPrice(productCollection.getCostPrice());
         product.setPrice(productCollection.getPrice());
-        product.setColor(productCollection.getColor());
         product.getTags().addAll(productCollection.getTags());
 
         List<Document> documents = productCollection.getImages().stream().map(image -> {

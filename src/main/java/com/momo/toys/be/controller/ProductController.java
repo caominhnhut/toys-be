@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController()
+@RestController
 public class ProductController {
 
     @Autowired
@@ -43,7 +43,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
-    @PostMapping(value = "/category/{category-id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/categories/{category-id}/products", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_EMPLOYEE')")
     public ResponseEntity create(@RequestPart("product") Product product, @RequestPart("images") MultipartFile[] images, @PathVariable("category-id") String categoryId) {
 
