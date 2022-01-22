@@ -141,8 +141,8 @@ public class ProductServiceImpl implements ProductService {
         Sort sortable = Sort.by("createdDate").descending();
 
         Pageable pageable = PageRequest.of(offset, limit, sortable);
-
-        Page<ProductEntity> productEntities = productRepository.findByCategory(categoryId, pageable);
+        
+        Page<ProductEntity> productEntities = productRepository.findByCategory(categoryId, pageable, EntityStatus.DELETED);
 
         return productEntities.stream().map(productEntity -> {
             Product productModel = ProductMapper.mapEntityToModel.apply(productEntity);
