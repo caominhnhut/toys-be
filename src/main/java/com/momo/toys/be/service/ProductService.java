@@ -16,5 +16,7 @@ public interface ProductService{
 
     Set<Product> findByCategory(Long categoryId, int offset, int limit);
 
-    Boolean delete(Long productId, Boolean isSoftDelete) throws NotFoundException;
+    Boolean delete(Long productId, boolean isSoftDelete) throws NotFoundException;
+
+    List<Product> findByCriteria(String criteria);
 }

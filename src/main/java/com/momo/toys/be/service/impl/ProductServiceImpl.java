@@ -1,5 +1,26 @@
 package com.momo.toys.be.service.impl;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import com.momo.toys.be.entity.CategoryEntity;
 import com.momo.toys.be.entity.DocumentEntity;
 import com.momo.toys.be.entity.ProductEntity;
@@ -15,30 +36,11 @@ import com.momo.toys.be.repository.ProductRepository;
 import com.momo.toys.be.service.AccountService;
 import com.momo.toys.be.service.DocumentService;
 import com.momo.toys.be.service.ProductService;
-import javassist.NotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
+import javassist.NotFoundException;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements ProductService{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceImpl.class);
 
@@ -58,16 +60,16 @@ public class ProductServiceImpl implements ProductService {
     private AccountService accountService;
 
     @Override
-    public Long create(Product product) throws NotFoundException, InterruptedException {
+    public Long create(Product product) throws NotFoundException, InterruptedException{
         Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(product.getCategoryId());
-        if (!categoryEntityOptional.isPresent()) {
+        if(!categoryEntityOptional.isPresent()){
             throw new NotFoundException(String.format("Category with id [%s] not found", product.getCategoryId()));
         }
 
-        for (Document image : product.getImages()) {
+        for(Document image : product.getImages()){
             String extension = StringUtils.getFilenameExtension(image.getFilename());
             String uniqueName = commonUtility.uniqueFileName.apply(extension);
-            if (image.getFilename().equals(product.getMainImage())) {
+            if(image.getFilename().equals(product.getMainImage())){
                 product.setMainImage(uniqueName);
             }
             image.setFilename(uniqueName);
@@ -81,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
         productEntity.setCreatedBy(accountService.getAuthorizedAccount().getName());
         productRepository.save(productEntity);
 
-        for (Document image : product.getImages()) {
+        for(Document image : product.getImages()){
             documentService.upload(image, productEntity);
         }
 
@@ -89,11 +91,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Long update(Product product) throws NotFoundException, FileStorageException {
+    public Long update(Product product) throws NotFoundException, FileStorageException{
 
         Optional<ProductEntity> existingProductEntityOptional = productRepository.findById(product.getId());
 
-        if (!existingProductEntityOptional.isPresent()) {
+        if(!existingProductEntityOptional.isPresent()){
             throw new NotFoundException(String.format("Product with id [%s] not found", product.getId()));
         }
 
@@ -101,16 +103,16 @@ public class ProductServiceImpl implements ProductService {
         convertFromModelToEntity.accept(product, productEntity);
 
         List<Document> images = product.getImages();
-        if (images == null || images.isEmpty()) {
+        if(images == null || images.isEmpty()){
             productRepository.save(productEntity);
             return productEntity.getId();
         }
 
         List<String> newUniqueNames = new ArrayList<>();
-        for (Document image : images) {
+        for(Document image : images){
             String extension = StringUtils.getFilenameExtension(image.getFilename());
             String uniqueName = commonUtility.uniqueFileName.apply(extension);
-            if (image.getFilename().equals(product.getMainImage())) {
+            if(image.getFilename().equals(product.getMainImage())){
                 productEntity.setMainImage(uniqueName);
             }
             image.setFilename(uniqueName);
@@ -122,9 +124,9 @@ public class ProductServiceImpl implements ProductService {
 
         // Delete existing images
         Set<DocumentEntity> existingImages = productEntity.getImages();
-        for (DocumentEntity imageEntity : existingImages) {
+        for(DocumentEntity imageEntity : existingImages){
 
-            if (newUniqueNames.contains(imageEntity.getFilename())) {
+            if(newUniqueNames.contains(imageEntity.getFilename())){
                 continue;
             }
 
@@ -136,12 +138,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Set<Product> findByCategory(Long categoryId, int offset, int limit) {
+    public Set<Product> findByCategory(Long categoryId, int offset, int limit){
 
         Sort sortable = Sort.by("createdDate").descending();
 
         Pageable pageable = PageRequest.of(offset, limit, sortable);
-        
+
         Page<ProductEntity> productEntities = productRepository.findByCategory(categoryId, pageable, EntityStatus.DELETED);
 
         return productEntities.stream().map(productEntity -> {
@@ -153,32 +155,39 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Boolean delete(Long productId, Boolean isSoftDelete) throws NotFoundException {
+    public Boolean delete(Long productId, boolean isSoftDelete) throws NotFoundException{
         Optional<ProductEntity> existingProductEntityOptional = productRepository.findById(productId);
 
-        if (!existingProductEntityOptional.isPresent()) {
+        if(!existingProductEntityOptional.isPresent()){
             throw new NotFoundException(String.format("Product with id [%s] not found", productId));
         }
 
         ProductEntity productEntity = existingProductEntityOptional.get();
 
-        if (isSoftDelete) {
+        if(isSoftDelete){
             productEntity.setStatus(EntityStatus.DELETED);
             productRepository.save(productEntity);
             return true;
         }
 
-        for (DocumentEntity image : productEntity.getImages()) {
+        for(DocumentEntity image : productEntity.getImages()){
 
-            try {
+            try{
                 Files.deleteIfExists(Paths.get(image.getFileUri()));
                 documentService.delete(DocumentMapper.mapEntityToDocument.apply(image));
-            } catch (IOException | FileStorageException e) {
+            }catch(IOException | FileStorageException e){
                 LOGGER.error(e.getMessage());
             }
         }
         productRepository.delete(productEntity);
         return true;
+    }
+
+    @Override
+    public List<Product> findByCriteria(String criteria){
+        List<ProductEntity> productEntities = productRepository.findByCriteria(criteria);
+
+        return productEntities.stream().map(ProductMapper.mapEntityToModel).collect(Collectors.toList());
     }
 
     private BiConsumer<Product, ProductEntity> convertFromModelToEntity = (product, productEntity) -> {

@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.momo.toys.be.entity.ProductEntity;
 
-public interface ProductRepository extends CrudRepository<ProductEntity, Long>{
+public interface ProductRepository extends CrudRepository<ProductEntity, Long>, CustomProductRepository{
 
     @Query("Select p from ProductEntity as p where p.categoryEntity.id = :categoryId and p.status != :notEntityStatus")
     Page<ProductEntity> findByCategory(Long categoryId, Pageable pageable, EntityStatus notEntityStatus);
