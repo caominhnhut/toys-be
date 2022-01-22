@@ -26,6 +26,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -150,7 +153,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Boolean softDelete(Long productId) throws NotFoundException {
+    public Boolean delete(Long productId, Boolean isSoftDelete) throws NotFoundException {
         Optional<ProductEntity> existingProductEntityOptional = productRepository.findById(productId);
 
         if (!existingProductEntityOptional.isPresent()) {
@@ -158,8 +161,23 @@ public class ProductServiceImpl implements ProductService {
         }
 
         ProductEntity productEntity = existingProductEntityOptional.get();
-        productEntity.setStatus(EntityStatus.DELETED);
-        productRepository.save(productEntity);
+
+        if (isSoftDelete) {
+            productEntity.setStatus(EntityStatus.DELETED);
+            productRepository.save(productEntity);
+            return true;
+        }
+
+        for (DocumentEntity image : productEntity.getImages()) {
+
+            try {
+                Files.deleteIfExists(Paths.get(image.getFileUri()));
+                documentService.delete(DocumentMapper.mapEntityToDocument.apply(image));
+            } catch (IOException | FileStorageException e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
+        productRepository.delete(productEntity);
         return true;
     }
 

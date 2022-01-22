@@ -95,13 +95,15 @@ paths:
 
   /products/{product-id}:
     delete:
-      summary: Soft delete a product
-      description: The api is used for soft delete a product.
-      operationId: softDeleteProduct
+      summary: Delete a product
+      description: The api is used for delete a product.
+      operationId: deleteProduct
       tags:
         - Product
       parameters:
         - $ref: '#/components/parameters/ProductIdPathParam'
+        - $ref: '#/components/parameters/IsSoftDeleteRequestParam'
+
       responses:
         '200':
           $ref: '#/components/responses/Result'
@@ -186,6 +188,14 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/ProductId'
+
+    IsSoftDeleteRequestParam:
+      name: is-soft-delete
+      in: query
+      description: If Is soft delete as false, this API will hard delete product
+      required: false
+      schema:
+        $ref: '#/components/schemas/IsSoftDelete'
 
   schemas:
     CategoryId:
@@ -283,6 +293,10 @@ components:
 
     Result:
       description: Action status.
+      type: boolean
+
+    IsSoftDelete:
+      description: Is soft delete product?.
       type: boolean
 
     Problem:
