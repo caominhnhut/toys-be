@@ -10,9 +10,11 @@ import javassist.NotFoundException;
 
 public interface ProductService{
 
-    Long create(Product product) throws NotFoundException;
+    Long create(Product product) throws NotFoundException, InterruptedException;
 
     Long update(Product product) throws NotFoundException, FileStorageException;
 
     Set<Product> findByCategory(Long categoryId, int offset, int limit);
+
+    Boolean softDelete(Long productId) throws NotFoundException;
 }

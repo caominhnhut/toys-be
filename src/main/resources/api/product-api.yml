@@ -93,6 +93,33 @@ paths:
         default:
           $ref: '#/components/responses/Problem'
 
+  /products/{product-id}:
+    delete:
+      summary: Soft delete a product
+      description: The api is used for soft delete a product.
+      operationId: softDeleteProduct
+      tags:
+        - Product
+      parameters:
+        - $ref: '#/components/parameters/ProductIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/Result'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
 components:
 
   headers:
@@ -127,6 +154,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ProductsList'
+
+    Result:
+      description: Action status
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Result'
 
     Problem:
       description: A generic problem response.
@@ -246,6 +280,10 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Product'
+
+    Result:
+      description: Action status.
+      type: boolean
 
     Problem:
       description: A generic problem response describing a client or server problem.

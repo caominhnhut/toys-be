@@ -1,6 +1,7 @@
 package com.momo.toys.be.factory;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.function.UnaryOperator;
 
 import org.springframework.context.annotation.Bean;
@@ -28,5 +29,5 @@ public class CommonUtility{
         return problem;
     }
 
-    public UnaryOperator<String> uniqueFileName = extension -> String.format("%s.%s", Calendar.getInstance().getTime().getTime(), extension);
+    public UnaryOperator<String> uniqueFileName = extension -> String.format("%s.%s", Calendar.getInstance().getTimeInMillis(), extension);
 }
