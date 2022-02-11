@@ -1,5 +1,17 @@
 package com.momo.toys.be.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
+
 import com.momo.toys.be.entity.mongo.CategoryCollection;
 import com.momo.toys.be.entity.mongo.ProductCollection;
 import com.momo.toys.be.factory.mapper.ProductMapper;
@@ -11,24 +23,14 @@ import com.momo.toys.be.repository.ProductRepository;
 import com.momo.toys.be.service.AccountService;
 import com.momo.toys.be.service.DocumentService;
 import com.momo.toys.be.service.ProductService;
-import javassist.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
+import javassist.NotFoundException;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements ProductService{
 
     private static final String CATEGORY_NOT_FOUND = "The category not found";
+
     @Autowired
     private CategoryRepository categoryRepository;
 
@@ -43,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
     private AccountService accountService;
 
     @Override
-    public String create(String categoryId, Product product) throws NotFoundException {
+    public String create(String categoryId, Product product) throws NotFoundException{
 
         Optional<CategoryCollection> optionalCategoryCollection = categoryRepository.findById(categoryId);
         if (!optionalCategoryCollection.isPresent()) {
@@ -53,13 +55,12 @@ public class ProductServiceImpl implements ProductService {
         Authentication authentication = accountService.getAuthenticatedUser();
         product.setOwner(authentication.getName());
 
-        List<Document> insertedImages = insertImages.apply(product.getImages());
-
         ProductCollection productCollection = ProductMapper.mapToProductCollection.apply(product);
-
-        List<DocumentMeta> documentMetas = convertToDocumentMeta.apply(product.getImageName(), insertedImages);
-        productCollection.getImages().clear();
-        productCollection.getImages().addAll(documentMetas);
+        if (!product.getImages().isEmpty()) {
+            List<Document> insertedImages = insertImages.apply(product.getImages());
+            List<DocumentMeta> documentMetas = convertToDocumentMeta(insertedImages);
+            productCollection.setImages(documentMetas);
+        }
 
         productRepository.save(productCollection);
 
@@ -71,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findByCategoryId(String categoryId) throws NotFoundException {
+    public List<Product> findByCategoryId(String categoryId) throws NotFoundException{
 
         Optional<CategoryCollection> optionalCategory = categoryRepository.findById(categoryId);
         if (!optionalCategory.isPresent()) {
@@ -82,28 +83,28 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductCollection> products = category.getProducts();
 
-        if(products.isEmpty()){
+        if (products.isEmpty()) {
             return Collections.emptyList();
         }
 
-        return products.stream().map(ProductMapper.mapFromProductCollection::apply).collect(Collectors.toList());
+        return products.stream().map(ProductMapper.mapFromProductCollection).collect(Collectors.toList());
     }
 
-    private UnaryOperator<List<Document>> insertImages = documents -> {
-        return documents.stream().map(document -> documentService.upload(document)).collect(Collectors.toList());
-    };
+    private UnaryOperator<List<Document>> insertImages = documents -> documents.stream().map(document -> documentService.upload(document)).collect(Collectors.toList());
 
-    private BiFunction<String, List<Document>, List<DocumentMeta>> convertToDocumentMeta = (filename, documents) -> {
-        return documents.stream().map(document -> {
-
+    private List<DocumentMeta> convertToDocumentMeta(List<Document> documents){
+        List<DocumentMeta> documentMetaList = new ArrayList<>();
+        for (int i = 0; i < documents.size(); i++) {
+            Document document = documents.get(i);
             DocumentMeta documentMeta = new DocumentMeta();
-            documentMeta.setUri(document.getFileUri());
-            if (document.getFilename().equals(filename)) {
+            documentMeta.setUrl(document.getDocumentUrl());
+            documentMeta.setDocumentId(document.getObjectId());
+            if (i == 0) {
                 documentMeta.setRequired(true);
             }
+            documentMetaList.add(documentMeta);
+        }
 
-            return documentMeta;
-        }).collect(Collectors.toList());
-    };
-
+        return documentMetaList;
+    }
 }

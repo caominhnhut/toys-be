@@ -52,7 +52,7 @@ public class DocumentController {
         Document document = DocumentMapper.mapToDocument.apply(multipartFile);
         document = documentService.upload(document);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(document.getFileUri());
+        return ResponseEntity.status(HttpStatus.CREATED).body(document.getDocumentUrl());
     }
 
     @GetMapping(value = "/no-auth/document/file-content")

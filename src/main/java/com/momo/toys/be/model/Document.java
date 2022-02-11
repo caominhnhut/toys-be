@@ -12,7 +12,7 @@ public class Document {
 
     private String fileType;
 
-    private String fileUri;
+    private String documentUrl;
 
     private Long fileSize;
 
@@ -44,12 +44,12 @@ public class Document {
         this.fileType = fileType;
     }
 
-    public String getFileUri() {
-        return fileUri;
+    public String getDocumentUrl() {
+        return documentUrl;
     }
 
-    public void setFileUri(String fileUri) {
-        this.fileUri = fileUri;
+    public void setDocumentUrl(String documentUrl) {
+        this.documentUrl = documentUrl;
     }
 
     public Long getFileSize() {

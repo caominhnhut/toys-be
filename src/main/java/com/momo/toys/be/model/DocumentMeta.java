@@ -1,10 +1,14 @@
 package com.momo.toys.be.model;
 
+import org.bson.types.ObjectId;
+
 public class DocumentMeta {
+
+    private ObjectId documentId;
 
     private boolean isRequired;
 
-    private String uri;
+    private String url;
 
     public boolean isRequired() {
         return isRequired;
@@ -14,11 +18,19 @@ public class DocumentMeta {
         isRequired = required;
     }
 
-    public String getUri() {
-        return uri;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public ObjectId getDocumentId(){
+        return documentId;
+    }
+
+    public void setDocumentId(ObjectId documentId){
+        this.documentId = documentId;
     }
 }

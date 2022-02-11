@@ -47,7 +47,6 @@ public class ProductMapper{
         product.setCode(productDto.getCode());
         product.setOwner(productDto.getOnwer());
         product.setDescription(productDto.getDescription());
-        product.setImageName(productDto.getImageName());
         product.setAmount(productDto.getAmount());
         product.setCostPrice(productDto.getCostPrice());
         product.setPrice(productDto.getPrice());
@@ -95,7 +94,7 @@ public class ProductMapper{
         List<Document> documents = productCollection.getImages().stream().map(image -> {
             Document document = new Document();
             document.setRequired(image.isRequired());
-            document.setFileUri(image.getUri());
+            document.setDocumentUrl(image.getUrl());
             return document;
         }).collect(Collectors.toList());
 
@@ -120,7 +119,7 @@ public class ProductMapper{
         List<FileData> filesData = product.getImages().stream().map(image -> {
             FileData fileData = new FileData();
             fileData.setIsMainImage(image.isRequired());
-            fileData.setFileUri(image.getFileUri());
+            fileData.setFileUri(image.getDocumentUrl());
             return fileData;
         }).collect(Collectors.toList());
 

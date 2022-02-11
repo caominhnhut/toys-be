@@ -23,7 +23,6 @@ public class GenerateModelServiceImpl implements GenerateModelService {
         product.setName("Xe Kéo Hình Khối");
         product.setDescription("Sản phẩm chất lượng tuyệt vời");
         product.setAmount(7);
-        product.setImageName("c.png");
         product.setCostPrice(BigDecimal.valueOf(100000));
         product.setPrice(BigDecimal.valueOf(150000));
         product.setTags(Arrays.asList(EnumTag.NEW));

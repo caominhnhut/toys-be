@@ -156,4 +156,12 @@ public class ProductCollection{
     public void setUpdatedDate(Date updatedDate){
         this.updatedDate = updatedDate;
     }
+
+    public void setTags(List<EnumTag> tags){
+        this.tags = tags;
+    }
+
+    public void setImages(List<DocumentMeta> images){
+        this.images = images;
+    }
 }

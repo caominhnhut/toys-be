@@ -34,7 +34,7 @@ public class DriveDocumentServiceImpl implements DocumentService {
             throw new IllegalArgumentException(e.getMessage());
         }
 
-        document.setFileUri(buildDownloadUri.apply(document.getFilename()));
+        document.setDocumentUrl(buildDownloadUri.apply(document.getFilename()));
         DocumentEntity documentEntity = DocumentMapper.mapToDocumentEntity.apply(document);
 
         documentRepository.save(documentEntity);

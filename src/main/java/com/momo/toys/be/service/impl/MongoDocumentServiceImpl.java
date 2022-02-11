@@ -1,6 +1,7 @@
 package com.momo.toys.be.service.impl;
 
 import com.momo.toys.be.exception.FileStorageException;
+import com.momo.toys.be.factory.CommonUtility;
 import com.momo.toys.be.model.Document;
 import com.momo.toys.be.service.DocumentService;
 import com.mongodb.BasicDBObject;
@@ -30,13 +31,15 @@ public class MongoDocumentServiceImpl implements DocumentService {
     @Override
     public Document upload(Document document) {
 
-        String fileUri = buildDownloadUri.apply(document.getFilename());
+        String uniqueFilename = CommonUtility.buildUniqueFilename.apply(document.getFilename());
+        document.setFilename(uniqueFilename);
+        String documentUrl = buildDownloadUri.apply(document.getFilename());
         DBObject metaData = new BasicDBObject();
-        metaData.put("fileUri", fileUri);
+        metaData.put("documentUrl", documentUrl);
 
         ObjectId objectId = gridFsOperations.store(new ByteArrayInputStream(document.getFileContent()), document.getFilename(), metaData);
         document.setObjectId(objectId);
-        document.setFileUri(fileUri);
+        document.setDocumentUrl(documentUrl);
 
         return document;
     }

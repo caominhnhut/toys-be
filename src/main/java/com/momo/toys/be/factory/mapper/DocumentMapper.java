@@ -36,7 +36,7 @@ public class DocumentMapper {
         documentEntity.setFilename(document.getFilename());
         documentEntity.setFileType(document.getFileType());
         documentEntity.setFileSize(document.getFileSize());
-        documentEntity.setFileUri(document.getFileUri());
+        documentEntity.setFileUri(document.getDocumentUrl());
 
         return documentEntity;
     };
