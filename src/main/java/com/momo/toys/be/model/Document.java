@@ -10,7 +10,7 @@ public class Document {
 
     private String filename;
 
-    private String fileType;
+    private String mimeType;
 
     private String documentUrl;
 
@@ -36,12 +36,12 @@ public class Document {
         this.filename = filename;
     }
 
-    public String getFileType() {
-        return fileType;
+    public String getMimeType() {
+        return mimeType;
     }
 
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 
     public String getDocumentUrl() {

@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class DocumentMapper {
@@ -14,10 +15,10 @@ public class DocumentMapper {
 
         Document document = new Document();
 
-        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+        String filename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         document.setFilename(filename);
 
-        document.setFileType(file.getContentType());
+        document.setMimeType(file.getContentType());
         document.setFileSize(file.getSize());
 
         try {
@@ -34,7 +35,7 @@ public class DocumentMapper {
 
         DocumentEntity documentEntity = new DocumentEntity();
         documentEntity.setFilename(document.getFilename());
-        documentEntity.setFileType(document.getFileType());
+        documentEntity.setFileType(document.getMimeType());
         documentEntity.setFileSize(document.getFileSize());
         documentEntity.setFileUri(document.getDocumentUrl());
 

@@ -36,6 +36,7 @@ public class MongoDocumentServiceImpl implements DocumentService {
         String documentUrl = buildDownloadUri.apply(document.getFilename());
         DBObject metaData = new BasicDBObject();
         metaData.put("documentUrl", documentUrl);
+        metaData.put("mimeType", document.getMimeType());
 
         ObjectId objectId = gridFsOperations.store(new ByteArrayInputStream(document.getFileContent()), document.getFilename(), metaData);
         document.setObjectId(objectId);
