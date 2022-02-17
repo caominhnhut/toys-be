@@ -7,6 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jetbrains.annotations.NotNull;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,51 +18,40 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.momo.toys.be.factory.TokenHelper;
 
-import io.jsonwebtoken.ExpiredJwtException;
-
 public class AuthenticationFilter extends OncePerRequestFilter{
+
+    private static final String BEARER = "Bearer ";
 
     private UserDetailsService userDetailsService;
 
     private TokenHelper tokenHelper;
 
-    public AuthenticationFilter(UserDetailsService userDetailsService, TokenHelper tokenHelper){
+    AuthenticationFilter(UserDetailsService userDetailsService, TokenHelper tokenHelper){
         this.userDetailsService = userDetailsService;
         this.tokenHelper = tokenHelper;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException{
-        final String requestTokenHeader = request.getHeader("Authorization");
-
-        String username = null;
-        String token = null;
-
+    protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain chain) throws ServletException, IOException{
+        final String header = request.getHeader("Authorization");
         // JWT Token is in the form "Bearer token". Remove Bearer word and get only the Token
-        if(requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")){
-            token = requestTokenHeader.substring(7);
-            try{
-                username = tokenHelper.getUsernameFromToken(token);
-            }catch(IllegalArgumentException e){
-                System.out.println("Unable to get JWT Token");
-            }catch(ExpiredJwtException e){
-                System.out.println("JWT Token has expired");
-            }
-        }else{
-            logger.warn("JWT Token does not begin with Bearer String");
+        if (header == null || !header.startsWith(BEARER)) {
+            chain.doFilter(request, response);
+            return;
         }
 
-        // Once we get the token validate it.
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+        String token = header.substring(BEARER.length());
+        if(!this.tokenHelper.validateToken(token, request)){
+            chain.doFilter(request, response);
+            return;
+        }
+
+        String username = tokenHelper.getUsernameFromToken(token);
+        if (username != null && !username.isEmpty()) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if(tokenHelper.validateToken(token, userDetails)){
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                // After setting the Authentication in the context, we specify
-                // that the current user is authenticated. So it passes the
-                // Spring Security Configurations successfully.
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         chain.doFilter(request, response);
     }
