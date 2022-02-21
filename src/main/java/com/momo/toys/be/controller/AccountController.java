@@ -2,9 +2,13 @@ package com.momo.toys.be.controller;
 
 import static com.momo.toys.be.enumeration.SupportedType.ACCOUNT_CREATION;
 import static com.momo.toys.be.enumeration.SupportedType.ACCOUNT_UPDATING;
+import static com.momo.toys.be.factory.ConstantUtility.AUTHORIZATION;
+import static com.momo.toys.be.factory.ConstantUtility.BEARER;
 
 import java.util.List;
 import java.util.function.Function;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -63,7 +68,7 @@ public class AccountController{
     public ResponseEntity createAccount(@RequestBody Account accountDto){
 
         Problem problem = validatorAccountCreation.apply(accountDto);
-        if(Strings.isNotEmpty(problem.getTitle())){
+        if (Strings.isNotEmpty(problem.getTitle())) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }
 
@@ -78,9 +83,9 @@ public class AccountController{
     public ResponseEntity login(@RequestBody Credential credential){
 
         Authentication authentication;
-        try{
+        try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credential.getUserName(), credential.getPassword()));
-        }catch(AuthenticationException e){
+        } catch (AuthenticationException e) {
             Problem problem = commonUtility.createProblem(HttpStatus.UNAUTHORIZED.toString(), HttpStatus.UNAUTHORIZED.value(), AUTHENTICATION_ERROR);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
         }
@@ -101,7 +106,7 @@ public class AccountController{
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity updateRoles(@PathVariable("account-id") Long accountId, @RequestBody List<Role> roles) throws NotFoundException{
         Problem problem = validatorAccountUpdating.apply(roles);
-        if(Strings.isNotEmpty(problem.getTitle())){
+        if (Strings.isNotEmpty(problem.getTitle())) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }
 
@@ -115,15 +120,22 @@ public class AccountController{
 
     }
 
+    @GetMapping("/no-auth/account/token")
+    public ResponseEntity validToken(HttpServletRequest request){
+        final String header = request.getHeader(AUTHORIZATION);
+        String token = header.substring(BEARER.length());
+        return ResponseEntity.status(HttpStatus.OK).body(accountService.validToken(token, request));
+    }
+
     private Function<Account, Problem> validatorAccountCreation = accountDto -> {
 
         Problem problem = new Problem();
 
         ValidationData validationData = new ValidationData().setEmail(accountDto.getUserName()).setPassword(accountDto.getPassword()).setRoles(accountDto.getRoles());
 
-        try{
+        try {
             validationProvider.executeValidators(validationData, ACCOUNT_CREATION);
-        }catch(ValidationException e){
+        } catch (ValidationException e) {
             return commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
 
@@ -136,9 +148,9 @@ public class AccountController{
 
         ValidationData validationData = new ValidationData().setRoles(roles);
 
-        try{
+        try {
             validationProvider.executeValidators(validationData, ACCOUNT_UPDATING);
-        }catch(ValidationException e){
+        } catch (ValidationException e) {
             return commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
 

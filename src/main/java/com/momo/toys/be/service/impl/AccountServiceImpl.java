@@ -1,27 +1,32 @@
 package com.momo.toys.be.service.impl;
 
-import com.momo.toys.be.entity.Authority;
-import com.momo.toys.be.entity.UserEntity;
-import com.momo.toys.be.enumeration.AuthorityName;
-import com.momo.toys.be.factory.CommonUtility;
-import com.momo.toys.be.factory.mapper.AccountMapper;
-import com.momo.toys.be.model.Account;
-import com.momo.toys.be.repository.AuthorityRepository;
-import com.momo.toys.be.repository.UserRepository;
-import com.momo.toys.be.service.AccountService;
-import javassist.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import com.momo.toys.be.entity.Authority;
+import com.momo.toys.be.entity.UserEntity;
+import com.momo.toys.be.enumeration.AuthorityName;
+import com.momo.toys.be.factory.CommonUtility;
+import com.momo.toys.be.factory.TokenHelper;
+import com.momo.toys.be.factory.mapper.AccountMapper;
+import com.momo.toys.be.model.Account;
+import com.momo.toys.be.repository.AuthorityRepository;
+import com.momo.toys.be.repository.UserRepository;
+import com.momo.toys.be.service.AccountService;
+
+import javassist.NotFoundException;
+
 @Service
-public class AccountServiceImpl implements AccountService {
+public class AccountServiceImpl implements AccountService{
 
     @Autowired
     private CommonUtility commonUtility;
@@ -32,8 +37,11 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private TokenHelper tokenHelper;
+
     @Override
-    public Long create(Account account) {
+    public Long create(Account account){
 
         UserEntity userEntity = AccountMapper.mapToEntity.apply(account);
 
@@ -49,7 +57,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean update(Account account) throws NotFoundException {
+    public boolean update(Account account) throws NotFoundException{
         List<Authority> authorities = findAuthoritiesByName.apply(AccountMapper.mapToAuthorityEntity.apply(account.getAuthorities()));
         Optional<UserEntity> optionalUserEntity = userRepository.findById(account.getId());
         if (optionalUserEntity.isPresent()) {
@@ -66,8 +74,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Authentication getAuthenticatedUser() {
+    public Authentication getAuthenticatedUser(){
         return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    @Override
+    public boolean validToken(String token, HttpServletRequest request){
+        return tokenHelper.validateToken(token, request);
     }
 
     private UnaryOperator<List<Authority>> findAuthoritiesByName = authorities -> {

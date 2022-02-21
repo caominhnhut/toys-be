@@ -5,6 +5,8 @@ import java.util.function.Function;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,8 @@ import io.jsonwebtoken.UnsupportedJwtException;
 
 @Component
 public class TokenHelper{
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TokenHelper.class);
 
     @Value("${jwt.expiresIn}")
     private long expiresIn;
@@ -42,6 +46,7 @@ public class TokenHelper{
     }
 
     public boolean validateToken(String token, HttpServletRequest request){
+
         try {
             getAllClaimsFromToken(token);
             return true;
