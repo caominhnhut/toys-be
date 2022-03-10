@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.momo.toys.be.account.Problem;
+import com.momo.toys.be.dto.Problem;
 import com.momo.toys.be.factory.CommonUtility;
 import com.momo.toys.be.factory.JsonHelper;
 import com.momo.toys.be.factory.mapper.ProductMapper;
@@ -40,10 +40,10 @@ public class ProductController{
     public ResponseEntity findProductsByCategory(@PathVariable("category-id") String categoryId){
 
         List<com.momo.toys.be.model.Product> productsModel = null;
-        try {
+        try{
             productsModel = productService.findByCategoryId(categoryId);
-        } catch (NotFoundException e) {
-            Problem problem = commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        }catch(NotFoundException e){
+            com.momo.toys.be.dto.Problem problem = commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }
 
@@ -59,15 +59,15 @@ public class ProductController{
         Product product = jsonHelper.convertJsonFromString(productJson, Product.class);
         com.momo.toys.be.model.Product productModel = ProductMapper.mapToProductModel.apply(product);
 
-        if (images != null) {
+        if(images != null){
             ProductMapper.mapImages.accept(images, productModel);
         }
 
-        try {
+        try{
             ProductId productId = new ProductId();
             productId.setId(productService.create(categoryId, productModel));
             return ResponseEntity.status(HttpStatus.CREATED).body(productId);
-        } catch (NotFoundException e) {
+        }catch(NotFoundException e){
             Problem problem = commonUtility.createInternalError(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }

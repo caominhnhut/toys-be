@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.momo.toys.be.account.Problem;
+import com.momo.toys.be.dto.Problem;
 import com.momo.toys.be.factory.CommonUtility;
 
 @ControllerAdvice

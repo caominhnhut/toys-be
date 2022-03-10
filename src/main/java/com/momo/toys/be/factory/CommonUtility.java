@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.momo.toys.be.account.Problem;
+import com.momo.toys.be.dto.Problem;
 
 @Component
 public class CommonUtility{

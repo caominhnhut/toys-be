@@ -30,8 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.momo.toys.be.account.Account;
 import com.momo.toys.be.account.AuthenticatedResult;
 import com.momo.toys.be.account.Credential;
-import com.momo.toys.be.account.Problem;
 import com.momo.toys.be.account.Role;
+import com.momo.toys.be.dto.Problem;
 import com.momo.toys.be.entity.UserEntity;
 import com.momo.toys.be.exception.ValidationException;
 import com.momo.toys.be.factory.CommonUtility;
@@ -44,8 +44,7 @@ import com.momo.toys.be.validation.ValidationProvider;
 
 import javassist.NotFoundException;
 
-@RestController
-public class AccountController{
+@RestController public class AccountController{
 
     @Autowired
     private AccountService accountService;
@@ -68,7 +67,7 @@ public class AccountController{
     public ResponseEntity createAccount(@RequestBody Account accountDto){
 
         Problem problem = validatorAccountCreation.apply(accountDto);
-        if (Strings.isNotEmpty(problem.getTitle())) {
+        if(Strings.isNotEmpty(problem.getTitle())){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }
 
@@ -83,10 +82,10 @@ public class AccountController{
     public ResponseEntity login(@RequestBody Credential credential){
 
         Authentication authentication;
-        try {
+        try{
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credential.getUserName(), credential.getPassword()));
-        } catch (AuthenticationException e) {
-            Problem problem = commonUtility.createProblem(HttpStatus.UNAUTHORIZED.toString(), HttpStatus.UNAUTHORIZED.value(), AUTHENTICATION_ERROR);
+        }catch(AuthenticationException e){
+            com.momo.toys.be.dto.Problem problem = commonUtility.createProblem(HttpStatus.UNAUTHORIZED.toString(), HttpStatus.UNAUTHORIZED.value(), AUTHENTICATION_ERROR);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
         }
 
@@ -105,8 +104,8 @@ public class AccountController{
     @PutMapping("/account/{account-id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity updateRoles(@PathVariable("account-id") Long accountId, @RequestBody List<Role> roles) throws NotFoundException{
-        Problem problem = validatorAccountUpdating.apply(roles);
-        if (Strings.isNotEmpty(problem.getTitle())) {
+        com.momo.toys.be.dto.Problem problem = validatorAccountUpdating.apply(roles);
+        if(Strings.isNotEmpty(problem.getTitle())){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }
 
@@ -127,30 +126,30 @@ public class AccountController{
         return ResponseEntity.status(HttpStatus.OK).body(accountService.validToken(token, request));
     }
 
-    private Function<Account, Problem> validatorAccountCreation = accountDto -> {
+    private Function<Account, com.momo.toys.be.dto.Problem> validatorAccountCreation = accountDto -> {
 
-        Problem problem = new Problem();
+        com.momo.toys.be.dto.Problem problem = new com.momo.toys.be.dto.Problem();
 
         ValidationData validationData = new ValidationData().setEmail(accountDto.getUserName()).setPassword(accountDto.getPassword()).setRoles(accountDto.getRoles());
 
-        try {
+        try{
             validationProvider.executeValidators(validationData, ACCOUNT_CREATION);
-        } catch (ValidationException e) {
+        }catch(ValidationException e){
             return commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
 
         return problem;
     };
 
-    private Function<List<Role>, Problem> validatorAccountUpdating = roles -> {
+    private Function<List<Role>, com.momo.toys.be.dto.Problem> validatorAccountUpdating = roles -> {
 
-        Problem problem = new Problem();
+        com.momo.toys.be.dto.Problem problem = new com.momo.toys.be.dto.Problem();
 
         ValidationData validationData = new ValidationData().setRoles(roles);
 
-        try {
+        try{
             validationProvider.executeValidators(validationData, ACCOUNT_UPDATING);
-        } catch (ValidationException e) {
+        }catch(ValidationException e){
             return commonUtility.createProblem(HttpStatus.INTERNAL_SERVER_ERROR.toString(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
 
