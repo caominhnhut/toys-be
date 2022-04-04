@@ -1,20 +1,26 @@
 package com.momo.toys.be.service.impl;
 
+import com.momo.toys.be.dto.AccountDto;
 import com.momo.toys.be.entity.Authority;
+import com.momo.toys.be.entity.BaseEntity;
 import com.momo.toys.be.entity.UserEntity;
 import com.momo.toys.be.enumeration.AuthorityName;
+import com.momo.toys.be.enumeration.EntityStatus;
 import com.momo.toys.be.factory.CommonUtility;
 import com.momo.toys.be.factory.mapper.AccountMapper;
 import com.momo.toys.be.model.Account;
 import com.momo.toys.be.repository.AuthorityRepository;
+import com.momo.toys.be.repository.CustomUserRepository;
 import com.momo.toys.be.repository.UserRepository;
 import com.momo.toys.be.service.AccountService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
@@ -31,6 +37,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CustomUserRepository customUserRepository;
 
     @Override
     public Long create(Account account) {
@@ -66,9 +75,50 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Authentication getAuthorizedAccount(){
+    public boolean updateStatus(AccountDto accountDto) throws NotFoundException {
+
+        Optional<UserEntity> userEntityOptional = userRepository.findById(accountDto.getId());
+        if (userEntityOptional.isPresent()) {
+            UserEntity userEntity = userEntityOptional.get();
+            userEntity.setStatus(EntityStatus.valueOf(accountDto.getStatus()));
+            userRepository.save(userEntity);
+            return true;
+        }
+        throw new NotFoundException(String.format("Account with id [%s] not found", accountDto.getId()));
+
+    }
+
+    @Override
+    public boolean delete(Long id) throws NotFoundException {
+
+        userRepository.deleteById(id);
+        return true;
+
+    }
+
+
+    @Override
+    public Authentication getAuthorizedAccount() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
+
+    @Override
+    public List<UserEntity> findAll() throws NotFoundException {
+
+        List<UserEntity> userEntities = userRepository.findAll();
+        if (userEntities.isEmpty()) {
+            throw new NotFoundException("Users are not found");
+        }
+
+        return userEntities;
+    }
+
+    @Override
+    public List<UserEntity> findStatus(String status) {
+        List<UserEntity> userEntities = customUserRepository.findByStatus(status);
+        return userEntities;
+    }
+
 
     private UnaryOperator<List<Authority>> findAuthoritiesByName = authorities -> {
 
@@ -83,4 +133,6 @@ public class AccountServiceImpl implements AccountService {
 
         return result;
     };
+
+
 }

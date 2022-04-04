@@ -1,14 +1,15 @@
 package com.momo.toys.be.controller;
 
 import com.momo.toys.be.account.*;
-import com.momo.toys.be.account.Account;
-import com.momo.toys.be.account.Problem;
+import com.momo.toys.be.dto.AccountDto;
 import com.momo.toys.be.entity.UserEntity;
+import com.momo.toys.be.enumeration.EntityStatus;
 import com.momo.toys.be.exception.ValidationException;
 import com.momo.toys.be.factory.CommonUtility;
 import com.momo.toys.be.factory.TokenHelper;
 import com.momo.toys.be.factory.mapper.AccountMapper;
 import com.momo.toys.be.model.Authority;
+import com.momo.toys.be.product.Product;
 import com.momo.toys.be.service.AccountService;
 import com.momo.toys.be.validation.ValidationData;
 import com.momo.toys.be.validation.ValidationProvider;
@@ -25,8 +26,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.momo.toys.be.enumeration.SupportedType.ACCOUNT_CREATION;
 import static com.momo.toys.be.enumeration.SupportedType.ACCOUNT_UPDATING;
@@ -139,4 +144,56 @@ public class AccountController {
 
         return problem;
     };
+
+
+    @GetMapping("/no-auth/accounts")
+    public ResponseEntity getAllUser() throws NotFoundException {
+
+        List<UserEntity> userEntities = accountService.findAll();
+        List<AccountDto> accountDto = userEntities.stream().map(AccountMapper.mapToDto).collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK).body(accountDto);
+
+    }
+
+    @GetMapping(value = "/no-auth/accounts/status")
+    @ResponseBody
+    public ResponseEntity getUsersByStatus(@RequestParam(required = false) String status) throws NotFoundException {
+        List<UserEntity> userEntities;
+
+        if (status == null || status.isEmpty()) {
+            userEntities = accountService.findAll();
+
+        } else {
+
+            userEntities = accountService.findStatus(status);
+
+        }
+        List<AccountDto> accountDto = userEntities.stream().map(AccountMapper.mapToDto).collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.OK).body(accountDto);
+
+    }
+
+    @PutMapping(value = "/account/{account-id}/status")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseBody
+    public ResponseEntity updateStatus(@PathVariable("account-id") Long accountId, @RequestParam String status) throws NotFoundException {
+
+        AccountDto accountDto = new AccountDto();
+        accountDto.setId(accountId);
+        accountDto.setStatus(status);
+
+        accountService.updateStatus(accountDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(String.format("Account with id [%s] updated", accountId));
+    }
+
+    @DeleteMapping("/account/{account-id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity deleteAccount(@PathVariable("account-id") Long accountId) throws NotFoundException {
+
+        accountService.delete(accountId);
+        return ResponseEntity.status(HttpStatus.OK).body(String.format("Account with id [%s] deleted", accountId));
+    }
+
 }

@@ -1,16 +1,19 @@
 package com.momo.toys.be.factory.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.momo.toys.be.account.Account;
 import com.momo.toys.be.account.Role;
+import com.momo.toys.be.dto.AccountDto;
 import com.momo.toys.be.entity.Authority;
 import com.momo.toys.be.entity.UserEntity;
 import com.momo.toys.be.enumeration.AuthorityName;
+import com.momo.toys.be.enumeration.EntityStatus;
 
-public class AccountMapper{
+public class AccountMapper {
 
     public static Function<List<Role>, List<com.momo.toys.be.model.Authority>> mapToAuthorityList = roles -> roles.stream().map(role -> {
         com.momo.toys.be.model.Authority authority = new com.momo.toys.be.model.Authority();
@@ -42,7 +45,23 @@ public class AccountMapper{
         return userEntity;
     };
 
-    private AccountMapper(){
+    private AccountMapper() {
         // hide constructor
     }
+
+    public static Function<UserEntity, AccountDto> mapToDto = userEntity -> {
+        AccountDto accountDto = new AccountDto();
+        accountDto.setId(userEntity.getId());
+        accountDto.setEmail(userEntity.getEmail());
+        accountDto.setUserName(userEntity.getUsername());
+        accountDto.setStatus(userEntity.getStatus().toString());
+
+        List<Authority> authorities = userEntity.getRoles();
+        for(Authority a : authorities){
+            String roleName = a.getName().toString();
+            accountDto.getRoles().add(roleName);
+        }
+        return accountDto;
+    };
+
 }

@@ -8,3 +8,8 @@ INSERT into category (id,  "name", status,created_date, navigation_id ) VALUES(1
 INSERT into category (id,  "name", status,created_date, navigation_id ) VALUES(2, 'Đồ Chơi Hình Học', 'ACTIVE', NOW(),2);
 INSERT into category (id,  "name", status,created_date, navigation_id ) VALUES(3, 'Đồ Chơi Con Vật', 'ACTIVE', NOW(),2);
 INSERT into category (id,  "name", status,created_date, navigation_id ) VALUES(4, 'Đồ Chơi Học Tập', 'ACTIVE', NOW(),2);
+
+
+INSERT into users (id,created_date,status, updated_date,"email", "password" ) VALUES(1, NOW(),'ACTIVE', 'Danh@123', 'ACTIVE', '123456');
+INSERT into users (id,created_date,status, updated_date,"email", "password" ) VALUES(2, NOW(),'ACTIVE', 'Ngoc@123', 'ACTIVE', '123456');
+INSERT into users (id,created_date,status, updated_date,"email", "password" ) VALUES(3, NOW(),'ACTIVE', 'Nhut@123', 'ACTIVE', '123456');
