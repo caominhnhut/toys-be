@@ -6,10 +6,10 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "navigation")
-@SequenceGenerator(name = "navigation_id_generator", sequenceName = "navigation_id_seq", allocationSize = 1)
+
 public class NavigationEntity extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "navigation_id_generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", unique = true)
@@ -40,5 +40,7 @@ public class NavigationEntity extends BaseEntity {
 
     public void setCategories(Set<CategoryEntity> categories){
         this.categories = categories;
+
+
     }
 }
