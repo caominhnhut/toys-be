@@ -3,13 +3,11 @@ package com.momo.toys.be.controller;
 import com.momo.toys.be.account.*;
 import com.momo.toys.be.dto.AccountDto;
 import com.momo.toys.be.entity.UserEntity;
-import com.momo.toys.be.enumeration.EntityStatus;
 import com.momo.toys.be.exception.ValidationException;
 import com.momo.toys.be.factory.CommonUtility;
 import com.momo.toys.be.factory.TokenHelper;
 import com.momo.toys.be.factory.mapper.AccountMapper;
 import com.momo.toys.be.model.Authority;
-import com.momo.toys.be.product.Product;
 import com.momo.toys.be.service.AccountService;
 import com.momo.toys.be.validation.ValidationData;
 import com.momo.toys.be.validation.ValidationProvider;
@@ -26,10 +24,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 

@@ -1,10 +1,7 @@
 package com.momo.toys.be.repository;
 
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-
 import com.momo.toys.be.entity.UserEntity;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
