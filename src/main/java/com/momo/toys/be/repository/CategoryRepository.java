@@ -1,9 +1,13 @@
 package com.momo.toys.be.repository;
 
-import org.springframework.data.repository.CrudRepository;
-
 import com.momo.toys.be.entity.CategoryEntity;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface CategoryRepository extends CrudRepository<CategoryEntity, Long>{
+import java.util.List;
+
+public interface CategoryRepository extends CrudRepository<CategoryEntity, Long>, PagingAndSortingRepository<CategoryEntity, Long> {
+    List<CategoryEntity> findAll();
+
 
 }
