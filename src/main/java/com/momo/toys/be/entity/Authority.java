@@ -10,11 +10,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "authority")
-@SequenceGenerator(name = "authority_id_generator", sequenceName = "authority_id_seq", allocationSize = 1)
+
 public class Authority extends BaseEntity implements GrantedAuthority{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "authority_id_generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)

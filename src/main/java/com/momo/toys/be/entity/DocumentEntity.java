@@ -4,11 +4,10 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "document")
-@SequenceGenerator(name = "document_id_generator", sequenceName = "document_id_seq", allocationSize = 1)
 public class DocumentEntity extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "document_id_generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "file_name", unique = true)
@@ -30,6 +29,10 @@ public class DocumentEntity extends BaseEntity {
     public void setProduct(ProductEntity product){
         this.product = product;
     }
+
+    @ManyToOne
+    @JoinColumn(name = "review_id")
+    private ReviewEntity review;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -73,5 +76,13 @@ public class DocumentEntity extends BaseEntity {
 
     public void setFileSize(Long fileSize) {
         this.fileSize = fileSize;
+    }
+
+    public ReviewEntity getReview() {
+        return review;
+    }
+
+    public void setReview(ReviewEntity review) {
+        this.review = review;
     }
 }

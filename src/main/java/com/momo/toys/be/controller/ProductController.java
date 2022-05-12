@@ -199,7 +199,7 @@ public class ProductController{
     }
 
     @GetMapping("/no-auth/products")
-    public ResponseEntity findByCriteria(@RequestParam("criteria") String criteria){
+    public ResponseEntity <Set<Product>> findByCriteria(@RequestParam("criteria") String criteria){
 
         List<com.momo.toys.be.model.Product> productModels = productService.findByCriteria(criteria);
 

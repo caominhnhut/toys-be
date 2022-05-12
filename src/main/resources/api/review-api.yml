@@ -1,0 +1,269 @@
+openapi: "3.0.2"
+info:
+  title: Review API
+  description: This service exposes the api of review.
+  version: '2022.1.0'
+  x-api-id: api-v0001
+  x-audience: toys-internal
+servers:
+  - url: '{server}'
+paths:
+  /product/{product-id}:
+    post:
+      summary: Create a review
+      description: The api is used for creating a new review.
+      operationId: createReview
+      tags:
+        - Review
+      requestBody:
+        $ref: '#/components/requestBodies/Review'
+      parameters:
+        - $ref: '#/components/parameters/ProductIdPathParam'
+      responses:
+        '201':
+          $ref: '#/components/responses/ProductId'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
+
+  /product/{product-id}/{review-id}:
+    put:
+      summary: Edit review
+      description: The api is used for edit review.
+      operationId: updateReview
+      tags:
+        - Review
+      requestBody:
+        $ref: '#/components/requestBodies/Review'
+      parameters:
+        - $ref: '#/components/parameters/ProductIdPathParam'
+        - $ref: '#/components/parameters/ReviewIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/ProductId'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
+  /{product-id}/{review-id}:
+    delete:
+      summary: Delete a product
+      description: The api is used for delete a review.
+      operationId: deleteProduct
+      tags:
+        - Product
+      parameters:
+        - $ref: '#/components/parameters/ProductIdPathParam'
+        - $ref: '#/components/parameters/ReviewIdPathParam'
+        - $ref: '#/components/parameters/IsSoftDeleteRequestParam'
+
+      responses:
+        '200':
+          $ref: '#/components/responses/Result'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
+components:
+
+  headers:
+    X-Supported-Versions:
+      description: A comma separated list of API versions supported by this resource method, referencing the "api-version" in the Content-Type.
+      schema:
+        type: string
+      example: '2020.1.0'
+
+  requestBodies:
+
+    Review:
+      description: An object containing the details of a Review.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Review'
+
+  responses:
+
+    ProductId:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReviewId'
+
+    Result:
+      description: Action status
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Result'
+
+    Problem:
+      description: A generic problem response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+  parameters:
+
+    ProductIdPathParam:
+      name: product-id
+      in: path
+      description: The identification of a product
+      required: true
+      schema:
+        $ref: '#/components/schemas/ProductId'
+
+
+    ReviewIdPathParam:
+      name: review-id
+      in: path
+      description: The identification of a review
+      required: true
+      schema:
+        $ref: '#/components/schemas/ReviewId'
+
+    IsSoftDeleteRequestParam:
+      name: is-soft-delete
+      in: query
+      description: If Is soft delete as false, this API will hard delete product
+      required: false
+      schema:
+        $ref: '#/components/schemas/IsSoftDelete'
+
+  schemas:
+    ReviewId:
+      description: The identification of a review.
+      required:
+        - id
+      properties:
+        id:
+          description: The value of identification.
+          example: 123
+          type: integer
+          format: int64
+
+    ProductId:
+      description: The identification of a product.
+      required:
+        - id
+      properties:
+        id:
+          description: The value of identification.
+          example: 123
+          type: integer
+          format: int64
+
+    Review:
+      description: An object which contains details about a review.
+      required:
+        - reviewContent
+      properties:
+        comment:
+          description: The comment of product.
+          example: 'An improvement in product quality'
+          type: string
+        createdBy:
+          description: The employee creates the product.
+          example: 'employee1@abc.xyz'
+          type: string
+        rate:
+          description: The rate of product.
+          example: '1 to 10'
+          type: integer
+        mainImage:
+          description: The product's comment image.
+          example: 'abc.jpg'
+          type: string
+        images:
+          $ref: '#/components/schemas/Images'
+
+    Images:
+      description: A list of images.
+      type: array
+      items:
+        $ref: '#/components/schemas/Image'
+
+    Image:
+      description: An object which contains image uri and id.
+      required:
+        - id
+        - uri
+      properties:
+        id:
+          description: Image Id.
+          example: 123
+          type: integer
+          format: int64
+        uri:
+          description: Image uri.
+          example: /123/image.jpg
+          type: string
+
+    Result:
+      description: Action status.
+      type: boolean
+
+    IsSoftDelete:
+      description: Is soft delete product?.
+      type: boolean
+
+    Problem:
+      description: A generic problem response describing a client or server problem.
+      required:
+        - title
+        - status
+        - detail
+      properties:
+        title:
+          description: A summary of the problem.
+          type: string
+          example: Service Unavailable
+        status:
+          description: The HTTP status code.
+          type: integer
+          format: int32
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+          example: 503
+        detail:
+          description: A detail of problem.
+          type: string
+          example: Connection time out

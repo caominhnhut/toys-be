@@ -61,4 +61,12 @@ public class DocumentMapper {
       image.setUri(documentModel.getFileUri());
         return image;
     };
+
+    public static Function<Document, com.momo.toys.be.review.Image> mapModelToReviewDto = documentModel ->{
+        com.momo.toys.be.review.Image image = new com.momo.toys.be.review.Image();
+        image.setId(documentModel.getId());
+        image.setUri(documentModel.getFileUri());
+        return image;
+    };
+
 }

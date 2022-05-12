@@ -16,11 +16,10 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "product")
-@SequenceGenerator(name = "product_id_generator", sequenceName = "product_id_seq", allocationSize = 1)
 public class ProductEntity extends BaseEntity{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", nullable = false)
@@ -46,6 +45,9 @@ public class ProductEntity extends BaseEntity{
 
     @OneToMany(mappedBy = "product")
     private Set<DocumentEntity> images;
+
+    @OneToMany(mappedBy = "product")
+    private Set<ReviewEntity> reviews;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
@@ -141,4 +143,14 @@ public class ProductEntity extends BaseEntity{
     public void setCreatedBy(String createdBy){
         this.createdBy = createdBy;
     }
+
+    public Set<ReviewEntity> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Set<ReviewEntity> reviews) {
+        this.reviews = reviews;
+    }
+
+
 }

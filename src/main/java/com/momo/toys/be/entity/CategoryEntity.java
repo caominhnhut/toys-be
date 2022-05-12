@@ -15,11 +15,10 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "category")
-@SequenceGenerator(name = "category_id_generator", sequenceName = "category_id_seq", allocationSize = 1)
 public class CategoryEntity extends BaseEntity{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_id_generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", unique = true)
