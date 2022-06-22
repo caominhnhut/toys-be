@@ -1,7 +1,7 @@
 package com.momo.toys.be.config;
 
 import com.momo.toys.be.factory.KafkaConstants;
-import com.momo.toys.be.model.Message;
+import com.momo.toys.be.model.KafkaMessage;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -20,12 +20,12 @@ import java.util.Map;
 public class KafkaProducerConfiguration {
 
     @Bean
-    public KafkaTemplate<String, Message> kafkaTemplate() {
+    public KafkaTemplate<String, String> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
-    public ProducerFactory<String, Message> producerFactory(){
+    public ProducerFactory<String, String> producerFactory(){
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
     }
 

@@ -3,7 +3,7 @@ package com.momo.toys.be.controller;
 import com.momo.toys.be.dto.Channel;
 import com.momo.toys.be.dto.PrivateMessage;
 import com.momo.toys.be.factory.KafkaConstants;
-import com.momo.toys.be.model.Message;
+import com.momo.toys.be.model.KafkaMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,41 +25,41 @@ import java.util.concurrent.ExecutionException;
 @RestController
 public class MessagingController{
 
-    @Autowired
-    private KafkaTemplate<String, Message> kafkaTemplate;
-
-    // TODO: not using at this time
-    @PostMapping(value = "/no-auth/message/send")
-    public void send(@RequestBody Message message){
-        message.setTimestamp(Calendar.getInstance());
-        try{
-            kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, message).get();
-        }catch(InterruptedException | ExecutionException e){
-            throw new RuntimeException(e);
-        }
-    }
+//    @Autowired
+//    private KafkaTemplate<String, KafkaMessage> kafkaTemplate;
+//
+//    // TODO: not using at this time
+//    @PostMapping(value = "/no-auth/message/send")
+//    public void send(@RequestBody KafkaMessage message){
+//        message.setTimestamp(Calendar.getInstance());
+//        try{
+//            kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, message).get();
+//        }catch(InterruptedException | ExecutionException e){
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     @PutMapping(value = "/no-auth/message/channel")
     public ResponseEntity establishPrivateChatChannel(@RequestBody Channel channel){
         return ResponseEntity.status(HttpStatus.OK).body("hi");
     }
 
-    @MessageMapping("/chat.sendMessage")
-    @SendTo("/topic/group")
-    public Message broadcastGroupMessage(@Payload Message message){
-        message.setTimestamp(Calendar.getInstance());
-        try{
-            kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, message).get();
-        }catch(InterruptedException | ExecutionException e){
-            throw new RuntimeException(e);
-        }
-
-        return message;
-    }
+//    @MessageMapping("/chat.sendMessage")
+//    @SendTo("/topic/group")
+//    public KafkaMessage broadcastGroupMessage(@Payload KafkaMessage message){
+//        message.setTimestamp(Calendar.getInstance());
+//        try{
+//            kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, message).get();
+//        }catch(InterruptedException | ExecutionException e){
+//            throw new RuntimeException(e);
+//        }
+//
+//        return message;
+//    }
 
     @MessageMapping("/chat.addUser")
     @SendTo("/topic/group")
-    public Message addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor){
+    public KafkaMessage addUser(@Payload KafkaMessage message, SimpMessageHeaderAccessor headerAccessor){
         headerAccessor.getSessionAttributes().put("username", message.getSender());
         return message;
     }

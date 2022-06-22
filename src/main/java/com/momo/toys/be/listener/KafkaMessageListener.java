@@ -13,7 +13,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import com.momo.toys.be.enumeration.MessageType;
 import com.momo.toys.be.factory.KafkaConstants;
-import com.momo.toys.be.model.Message;
+import com.momo.toys.be.model.KafkaMessage;
 
 @Component
 public class KafkaMessageListener{
@@ -36,7 +36,7 @@ public class KafkaMessageListener{
         if(username != null){
             LOGGER.info("User Disconnected : " + username);
 
-            Message chatMessage = new Message();
+            KafkaMessage chatMessage = new KafkaMessage();
             chatMessage.setMessageType(MessageType.LEAVE);
             chatMessage.setSender(username);
 
@@ -45,7 +45,7 @@ public class KafkaMessageListener{
     }
 
     @KafkaListener(topics = KafkaConstants.KAFKA_TOPIC, groupId = KafkaConstants.GROUP_ID)
-    public void listen(Message message){
+    public void listen(KafkaMessage message){
         System.out.println("Sending via kafka listener...");
         //messageSendingOperations.convertAndSend("/topic/group", message);
     }

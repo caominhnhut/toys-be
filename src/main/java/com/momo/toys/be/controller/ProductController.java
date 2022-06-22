@@ -47,7 +47,7 @@ public class ProductController{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
         }
 
-        List<Product> products = productsModel.stream().map(ProductMapper.mapToProductDto::apply).collect(Collectors.toList());
+        List<Product> products = productsModel.stream().map(ProductMapper.mapToProductDto).collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }

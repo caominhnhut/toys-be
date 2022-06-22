@@ -1,10 +1,11 @@
 package com.momo.toys.be.model;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 import com.momo.toys.be.enumeration.MessageType;
 
-public class Message{
+public class KafkaMessage implements Serializable{
 
     private MessageType type;
 
