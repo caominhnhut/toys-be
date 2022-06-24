@@ -20,12 +20,12 @@ import java.util.Map;
 public class KafkaProducerConfiguration {
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate() {
+    public KafkaTemplate<String, KafkaMessage> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
-    public ProducerFactory<String, String> producerFactory(){
+    public ProducerFactory<String, KafkaMessage> producerFactory(){
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
     }
 
@@ -33,8 +33,9 @@ public class KafkaProducerConfiguration {
     public Map<String, Object> producerConfigurations () {
         Map<String, Object> configurations = new HashMap<>();
         configurations.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConstants.KAFKA_BROKER);
+        configurations.put(ProducerConfig.CLIENT_ID_CONFIG, "TOY_BE");
         configurations.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configurations.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        configurations.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "com.momo.toys.be.factory.KafkaMessageSerializer");
 
         return configurations;
     }

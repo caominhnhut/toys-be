@@ -20,7 +20,7 @@ import com.momo.toys.be.service.OrderService;
 public class OrderServiceImpl implements OrderService{
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaDeliveryTemplate;
+    private KafkaTemplate<String, KafkaMessage> kafkaDeliveryTemplate;
 
     @Autowired
     private Gson gson;
@@ -35,12 +35,12 @@ public class OrderServiceImpl implements OrderService{
             kafkaMessage.setSender("TOY-BE");
             kafkaMessage.setMessageType(MessageType.JOIN);
 
-            Message<String> message = MessageBuilder
-                    .withPayload(gson.toJson(kafkaMessage))
+            Message<KafkaMessage> message = MessageBuilder
+                    .withPayload(kafkaMessage)
                     .setHeader(KafkaHeaders.TOPIC, KafkaConstants.KAFKA_TOY_DELIVERY_ITEM_TOPIC)
                     .build();
 
-            SendResult<String, String> result = kafkaDeliveryTemplate.send(message).get();
+            SendResult<String, KafkaMessage> result = kafkaDeliveryTemplate.send(message).get();
             return result.getRecordMetadata().topic();
         }catch(InterruptedException | ExecutionException e){
             e.printStackTrace();
