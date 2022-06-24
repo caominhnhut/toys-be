@@ -14,11 +14,6 @@ public class KafkaMessageSerializer implements Serializer<KafkaMessage>{
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void configure(Map configs, boolean isKey){
-
-    }
-
-    @Override
     public byte[] serialize(String topic, KafkaMessage kafkaMessage){
         if(kafkaMessage == null){
             System.err.println("Kafka message is null");
@@ -33,7 +28,12 @@ public class KafkaMessageSerializer implements Serializer<KafkaMessage>{
     }
 
     @Override
-    public void close(){
+    public void configure(Map<String, ?> configs, boolean isKey){
+        Serializer.super.configure(configs, isKey);
+    }
 
+    @Override
+    public void close(){
+        Serializer.super.close();
     }
 }

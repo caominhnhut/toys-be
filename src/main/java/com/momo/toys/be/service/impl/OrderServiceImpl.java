@@ -10,7 +10,6 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
 import com.momo.toys.be.enumeration.MessageType;
 import com.momo.toys.be.factory.KafkaConstants;
 import com.momo.toys.be.model.KafkaMessage;
@@ -21,9 +20,6 @@ public class OrderServiceImpl implements OrderService{
 
     @Autowired
     private KafkaTemplate<String, KafkaMessage> kafkaDeliveryTemplate;
-
-    @Autowired
-    private Gson gson;
 
     @Override
     public String checkOut(String orderId){
