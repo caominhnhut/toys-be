@@ -4,14 +4,18 @@ import com.momo.toys.be.enumeration.EntityStatus;
 
 import javax.persistence.*;
 import java.util.Calendar;
+import java.util.Date;
 
 @MappedSuperclass
 public class BaseEntity {
+
     @Column(name = "created_date")
-    protected Calendar createdDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    protected Date createdDate;
 
     @Column(name = "updated_date")
-    protected Calendar updatedDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    protected Date updatedDate;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -19,29 +23,29 @@ public class BaseEntity {
 
     @PrePersist
     public void onCreate() {
-        createdDate= Calendar.getInstance();
+        createdDate= Calendar.getInstance().getTime();
         updatedDate=null;
-        this.status = EntityStatus.ACTIVE;
+        this.status = EntityStatus.ACTIVATED;
     }
 
     @PreUpdate
     public void onUpdate() {
-        updatedDate= Calendar.getInstance();
+        updatedDate= Calendar.getInstance().getTime();
     }
 
-    public Calendar getCreatedDate() {
+    public Date getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Calendar createdDate) {
+    public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Calendar getUpdatedDate() {
+    public Date getUpdatedDate() {
         return updatedDate;
     }
 
-    public void setUpdatedDate(Calendar updatedDate) {
+    public void setUpdatedDate(Date updatedDate) {
         this.updatedDate = updatedDate;
     }
 

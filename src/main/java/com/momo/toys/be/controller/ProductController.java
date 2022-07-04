@@ -4,6 +4,7 @@ import static com.momo.toys.be.enumeration.SupportedType.DOCUMENT_UPLOADING;
 import static com.momo.toys.be.enumeration.SupportedType.PRODUCT_CREATION;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -212,5 +214,10 @@ public class ProductController{
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
-
+    @GetMapping("/no-auth/products/{from-date}/{to-date}")
+    public ResponseEntity findByDates(@PathVariable("from-date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
+            @PathVariable("to-date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate){
+        List<com.momo.toys.be.model.Product> products = productService.findByDates(fromDate, toDate);
+        return ResponseEntity.status(HttpStatus.OK).body(products);
+    }
 }

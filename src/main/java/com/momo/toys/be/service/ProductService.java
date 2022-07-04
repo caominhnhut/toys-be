@@ -1,8 +1,10 @@
 package com.momo.toys.be.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.momo.toys.be.entity.ProductEntity;
 import com.momo.toys.be.exception.FileStorageException;
 import com.momo.toys.be.model.Product;
 
@@ -19,4 +21,6 @@ public interface ProductService{
     Boolean delete(Long productId, boolean isSoftDelete) throws NotFoundException;
 
     List<Product> findByCriteria(String criteria);
+
+    List<Product> findByDates(Date fromDate, Date toDate);
 }
