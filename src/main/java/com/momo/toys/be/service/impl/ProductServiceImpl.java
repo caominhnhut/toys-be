@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,6 +28,7 @@ import com.momo.toys.be.entity.ProductEntity;
 import com.momo.toys.be.enumeration.EntityStatus;
 import com.momo.toys.be.exception.FileStorageException;
 import com.momo.toys.be.factory.CommonUtility;
+import com.momo.toys.be.factory.DateHelper;
 import com.momo.toys.be.factory.mapper.DocumentMapper;
 import com.momo.toys.be.factory.mapper.ProductMapper;
 import com.momo.toys.be.model.Document;
@@ -187,6 +189,16 @@ public class ProductServiceImpl implements ProductService{
     public List<Product> findByCriteria(String criteria){
         List<ProductEntity> productEntities = productRepository.findByCriteria(criteria);
 
+        return productEntities.stream().map(ProductMapper.mapEntityToModel).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Product> findByDates(Date fromDate, Date toDate){
+
+        fromDate = DateHelper.startTimeStamp(fromDate);
+        toDate = DateHelper.endTimeStamp(toDate);
+
+        List<ProductEntity> productEntities = productRepository.findByDates(fromDate, toDate);
         return productEntities.stream().map(ProductMapper.mapEntityToModel).collect(Collectors.toList());
     }
 
