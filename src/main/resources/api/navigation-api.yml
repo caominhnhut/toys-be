@@ -99,8 +99,14 @@ components:
     Navigation:
       description: An object which contains details about a Navigatio.
       required:
+        - id
         - name
       properties:
+        id:
+          description: The value of identification.
+          example: 123
+          type: integer
+          format: int64
         name:
           description: The name of navigation will be created.
           example: 'Home'

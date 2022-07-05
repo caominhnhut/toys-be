@@ -1,7 +1,8 @@
 package com.momo.toys.be.repository;
 
-import com.momo.toys.be.entity.DocumentEntity;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DocumentRepository extends CrudRepository<DocumentEntity, Long> {
+import com.momo.toys.be.entity.DocumentEntity;
+
+public interface DocumentRepository extends JpaRepository<DocumentEntity, Long>{
 }

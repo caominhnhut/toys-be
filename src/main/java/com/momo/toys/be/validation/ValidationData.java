@@ -3,8 +3,9 @@ package com.momo.toys.be.validation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.momo.toys.be.account.Role;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.momo.toys.be.account.Role;
 
 public class ValidationData{
 
@@ -19,6 +20,8 @@ public class ValidationData{
     private String productName;
 
     private String productCode;
+
+    private String categoryName;
 
     public String getProductName(){
         return productName;
@@ -80,6 +83,15 @@ public class ValidationData{
 
     public ValidationData setMultipartFile(MultipartFile multipartFile) {
         this.multipartFile = multipartFile;
+        return this;
+    }
+
+    public String getCategoryName(){
+        return categoryName;
+    }
+
+    public ValidationData setCategoryName(String categoryName){
+        this.categoryName = categoryName;
         return this;
     }
 }

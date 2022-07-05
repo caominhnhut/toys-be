@@ -1,11 +1,11 @@
 package com.momo.toys.be.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.momo.toys.be.entity.UserEntity;
 
-import java.util.List;
-
-public interface UserRepository extends CrudRepository<UserEntity, Long>{
+public interface UserRepository extends JpaRepository<UserEntity, Long>{
     List<UserEntity> findByEmail(String email);
 }

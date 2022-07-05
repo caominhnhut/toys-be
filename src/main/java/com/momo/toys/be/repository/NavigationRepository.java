@@ -1,8 +1,9 @@
 package com.momo.toys.be.repository;
 
-import com.momo.toys.be.entity.NavigationEntity;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface NavigationRepository extends CrudRepository<NavigationEntity, Long> {
+import com.momo.toys.be.entity.NavigationEntity;
+
+public interface NavigationRepository extends JpaRepository<NavigationEntity, Long>{
 
 }
