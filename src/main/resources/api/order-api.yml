@@ -1,0 +1,314 @@
+openapi: "3.0.2"
+info:
+  title: Order API
+  description: This service exposes the api of order.
+  version: '2021.1.0'
+  x-api-id: api-v0001
+  x-audience: toys-internal
+servers:
+  - url: '{server}'
+paths:
+  /orders:
+    post:
+      summary: Create order
+      description: The api is used for creating order.
+      operationId: createOrder
+      tags:
+        - Order
+      requestBody:
+        $ref: '#/components/requestBodies/Orders'
+      responses:
+        '201':
+          $ref: '#/components/responses/OrderId'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
+    get:
+      summary: Get all products of orders
+      description: The api is used for getting all products of order.
+      operationId: getAllByOrder
+      tags:
+        - Product
+      responses:
+        '200':
+          $ref: '#/components/responses/ProductsList'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
+  /orders/{order-id}:
+    put:
+      summary: Update order
+      description: The api is used for update to order.
+      operationId: updateOrder
+      tags:
+        - Order
+      requestBody:
+        $ref: '#/components/requestBodies/Order'
+      parameters:
+        - $ref: '#/components/parameters/OrderIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/OrderId'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
+    delete:
+      summary: Delete order
+      description: The api is used for delete a order.
+      operationId: deleteOrder
+      tags:
+        - Order
+      parameters:
+        - $ref: '#/components/parameters/OrderIdPathParam'
+        - $ref: '#/components/parameters/IsSoftDeleteRequestParam'
+
+      responses:
+        '200':
+          $ref: '#/components/responses/Result'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
+  /orders/{order-id}/checkout:
+    get:
+      summary: Check out order
+      description: The api is used for check out of order.
+      operationId: checkout
+      tags:
+        - Order
+      parameters:
+        - $ref: '#/components/parameters/OrderIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/OrderId'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+        '501':
+          $ref: '#/components/responses/Problem'
+        default:
+          $ref: '#/components/responses/Problem'
+
+
+
+components:
+
+  headers:
+    X-Supported-Versions:
+      description: A comma separated list of API versions supported by this resource method, referencing the "api-version" in the Content-Type.
+      schema:
+        type: string
+      example: '2020.1.0'
+
+  requestBodies:
+
+    Order:
+      description: An object containing the details of a Order.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Order'
+
+    Orders:
+      description: Order list.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Orders'
+
+  responses:
+
+    OrderId:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OrderId'
+
+    ProductsList:
+      description: List products of a order.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProductsList'
+
+
+    Result:
+      description: Action status
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Result'
+
+    Problem:
+      description: A generic problem response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+  parameters:
+
+    OrderIdPathParam:
+      name: order-id
+      in: path
+      description: The identification of a order
+      required: true
+      schema:
+        $ref: '#/components/schemas/OrderId'
+
+    ProductIdPathParam:
+      name: product-id
+      in: path
+      description: The identification of a product
+      required: true
+      schema:
+        $ref: '#/components/schemas/ProductId'
+
+    IsSoftDeleteRequestParam:
+      name: is-soft-delete
+      in: query
+      description: If Is soft delete as false, this API will hard delete product
+      required: false
+      schema:
+        $ref: '#/components/schemas/IsSoftDelete'
+
+  schemas:
+    Order:
+      description: An object which contains details about a order.
+      required:
+        - id
+        - quantity
+      properties:
+        id:
+          description: The value of identification.
+          example: 123
+          type: integer
+          format: int64
+        quantity:
+          description: The quantity of item.
+          example: 10
+          type: integer
+          format: int32
+
+    Orders:
+      description: Order list.
+      type: array
+      items:
+        $ref: '#/components/schemas/Order'
+
+    OrderId:
+      description: The identification of a order.
+      required:
+        - id
+      properties:
+        id:
+          description: The value of identification.
+          example: 123
+          type: integer
+          format: int64
+
+    ProductId:
+      description: The identification of a product.
+      required:
+        - id
+      properties:
+        id:
+          description: The value of identification.
+          example: 123
+          type: integer
+          format: int64
+
+    ProductsList:
+      description: List products of a order.
+      type: array
+      items:
+        $ref: '#/components/schemas/Order'
+
+    Result:
+      description: Action status.
+      type: boolean
+
+    IsSoftDelete:
+      description: Is soft delete product?.
+      type: boolean
+
+    Problem:
+      description: A generic problem response describing a client or server problem.
+      required:
+        - title
+        - status
+        - detail
+      properties:
+        title:
+          description: A summary of the problem.
+          type: string
+          example: Service Unavailable
+        status:
+          description: The HTTP status code.
+          type: integer
+          format: int32
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+          example: 503
+        detail:
+          description: A detail of problem.
+          type: string
+          example: Connection time out

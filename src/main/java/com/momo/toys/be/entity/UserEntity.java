@@ -1,5 +1,8 @@
 package com.momo.toys.be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,6 +12,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -30,6 +34,9 @@ public class UserEntity extends BaseEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
     private List<Authority> authorities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<OrderEntity> orderEntities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -92,4 +99,13 @@ public class UserEntity extends BaseEntity implements UserDetails {
     public List<Authority> getRoles() {
         return this.authorities;
     }
+
+    public List<OrderEntity> getOrderEntities() {
+        return orderEntities;
+    }
+
+    public void setOrderEntities(List<OrderEntity> orderEntities) {
+        this.orderEntities = orderEntities;
+    }
 }
+

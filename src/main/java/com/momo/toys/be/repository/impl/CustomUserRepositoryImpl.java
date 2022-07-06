@@ -27,4 +27,16 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
         cq.where(cb.equal(users.get("status"), EntityStatus.valueOf(status)));
         return em.createQuery(cq).getResultList();
     }
+
+    @Override
+    public UserEntity findByName(String name) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<UserEntity> cq = cb.createQuery(UserEntity.class);
+        Root<UserEntity> users = cq.from(UserEntity.class);
+        cq.select(users);
+        cq.where(cb.equal(users.get("email"), name));
+        return em.createQuery(cq).getSingleResult();
+    }
+
+
 }

@@ -190,6 +190,7 @@ public class ProductServiceImpl implements ProductService{
         return productEntities.stream().map(ProductMapper.mapEntityToModel).collect(Collectors.toList());
     }
 
+
     private BiConsumer<Product, ProductEntity> convertFromModelToEntity = (product, productEntity) -> {
         productEntity.setName(product.getName());
         productEntity.setCode(product.getCode());
@@ -198,4 +199,10 @@ public class ProductServiceImpl implements ProductService{
         productEntity.setPrice(product.getPrice());
         productEntity.setDescription(product.getDescription());
     };
+
+
+    @Override
+    public ProductEntity findProductById(Long productId){
+        return productRepository.findProductById(productId);
+    }
 }

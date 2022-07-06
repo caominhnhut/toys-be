@@ -1,18 +1,8 @@
 package com.momo.toys.be.entity;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 
 @Entity
 @Table(name = "product")
@@ -20,6 +10,7 @@ public class ProductEntity extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id")
     private Long id;
 
     @Column(name = "name", nullable = false)
@@ -52,6 +43,9 @@ public class ProductEntity extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity categoryEntity;
+
+    @OneToMany(mappedBy = "primaryKey.productEntity", cascade = CascadeType.ALL)
+    private Set<OrderDetailEntity> orderDetailEntities;
 
     public CategoryEntity getCategoryEntity(){
         return categoryEntity;
@@ -152,5 +146,34 @@ public class ProductEntity extends BaseEntity{
         this.reviews = reviews;
     }
 
+    public Set<OrderDetailEntity> getOrderDetailEntities() {
+        return orderDetailEntities;
+    }
 
+    public void setOrderDetailEntities(Set<OrderDetailEntity> orderDetailEntities) {
+        this.orderDetailEntities = orderDetailEntities;
+    }
+
+    public ProductEntity(Long id, String name, String code, String description, int amount, BigDecimal costPrice, BigDecimal price, String mainImage, Set<DocumentEntity> images, Set<ReviewEntity> reviews, CategoryEntity categoryEntity, Set<OrderDetailEntity> orderDetailEntities, String createdBy) {
+        this.id = id;
+        this.name = name;
+        this.code = code;
+        this.description = description;
+        this.amount = amount;
+        this.costPrice = costPrice;
+        this.price = price;
+        this.mainImage = mainImage;
+        this.images = images;
+        this.reviews = reviews;
+        this.categoryEntity = categoryEntity;
+        this.orderDetailEntities = orderDetailEntities;
+        this.createdBy = createdBy;
+    }
+
+    public ProductEntity() {
+    }
+
+    public void addOrderDetail(OrderDetailEntity orderDetailEntity){
+        this.orderDetailEntities.add(orderDetailEntity);
+    }
 }

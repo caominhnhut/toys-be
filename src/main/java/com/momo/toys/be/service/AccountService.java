@@ -23,4 +23,6 @@ public interface AccountService {
 
     boolean delete(Long id) throws NotFoundException;
 
+    UserEntity findUserByName(String name);
+
 }

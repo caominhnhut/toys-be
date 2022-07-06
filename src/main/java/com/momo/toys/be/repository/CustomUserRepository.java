@@ -7,5 +7,8 @@ import java.util.List;
 
 public interface CustomUserRepository {
     List<UserEntity> findByStatus(String status);
+
+    UserEntity findByName(String name);
+
 }
 

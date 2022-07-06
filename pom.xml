@@ -164,6 +164,29 @@
                         </configuration>
                     </execution>
 
+                    <execution>
+                        <id>order-definition</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/api/order-api.yml</inputSpec>
+                            <generatorName>jaxrs-spec</generatorName>
+                            <apiPackage>com.momo.toys.be.order</apiPackage>
+                            <modelPackage>com.momo.toys.be.order</modelPackage>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <generateModels>true</generateModels>
+                            <generateApis>false</generateApis>
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useSwaggerAnnotations>false</useSwaggerAnnotations>
+                                <java8>true</java8>
+                                <sourceFolder>api</sourceFolder>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+
                 </executions>
             </plugin>
 

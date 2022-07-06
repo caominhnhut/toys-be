@@ -1,8 +1,8 @@
 package com.momo.toys.be.repository.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.UnaryOperator;
+import com.momo.toys.be.entity.ProductEntity;
+import com.momo.toys.be.repository.CustomProductRepository;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -10,11 +10,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.springframework.stereotype.Service;
-
-import com.momo.toys.be.entity.ProductEntity;
-import com.momo.toys.be.repository.CustomProductRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.UnaryOperator;
 
 @Service
 public class CustomProductRepositoryImpl implements CustomProductRepository{
@@ -42,5 +40,17 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
 
     }
 
+
+    @Override
+    public ProductEntity findProductById(Long id) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<ProductEntity> cq = cb.createQuery(ProductEntity.class);
+        Root<ProductEntity> product = cq.from(ProductEntity.class);
+        cq.select(product);
+        cq.where(cb.equal(product.get("id"), id));
+        return em.createQuery(cq).getSingleResult();
+    }
+
     private UnaryOperator<String> wildCard = criteria -> "%" + criteria + "%";
 }
+

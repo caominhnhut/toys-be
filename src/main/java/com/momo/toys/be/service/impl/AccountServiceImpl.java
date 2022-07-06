@@ -2,7 +2,6 @@ package com.momo.toys.be.service.impl;
 
 import com.momo.toys.be.dto.AccountDto;
 import com.momo.toys.be.entity.Authority;
-import com.momo.toys.be.entity.BaseEntity;
 import com.momo.toys.be.entity.UserEntity;
 import com.momo.toys.be.enumeration.AuthorityName;
 import com.momo.toys.be.enumeration.EntityStatus;
@@ -15,12 +14,10 @@ import com.momo.toys.be.repository.UserRepository;
 import com.momo.toys.be.service.AccountService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
@@ -134,5 +131,9 @@ public class AccountServiceImpl implements AccountService {
         return result;
     };
 
+    @Override
+    public UserEntity findUserByName(String name){
+        return customUserRepository.findByName(name);
+    }
 
 }
