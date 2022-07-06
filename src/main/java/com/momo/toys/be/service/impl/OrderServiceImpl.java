@@ -92,17 +92,20 @@ public class OrderServiceImpl implements OrderService {
             if (Strings.isNotEmpty(problem.getTitle())) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
             }
-
+            ProductEntity productEntity = existingProductEntityOptional.get();
             OrderDetailEntity orderDetailEntity = new OrderDetailEntity();
             orderDetailEntity.setQuantity(order.getQuantity());
-            orderDetailEntity.setProductEntity(existingProductEntityOptional.get());
+            orderDetailEntity.setProductEntity(productEntity);
             orderDetailEntity.setOrderEntity(orderEntity);
-            BigDecimal totalPrice = existingProductEntityOptional.get().getPrice().multiply(valueOf(order.getQuantity()));
+            BigDecimal totalPrice = productEntity.getPrice().multiply(valueOf(order.getQuantity()));
             orderDetailEntity.setTotalPrice(totalPrice);
 
-            orderDetailRepository.save(orderDetailEntity);
-        }
+            int productAmount = productEntity.getAmount() - order.getQuantity();
+            productEntity.setAmount(productAmount);
 
+            orderDetailRepository.save(orderDetailEntity);
+
+        }
 
         return status(HttpStatus.CREATED).body(orderEntity.getId());
     }
