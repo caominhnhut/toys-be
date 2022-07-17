@@ -1,8 +1,12 @@
 package com.momo.toys.be.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,6 +53,32 @@ public class ProductEntity extends BaseEntity{
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity categoryEntity;
 
+    @OneToMany(
+            mappedBy = "primaryKey.product",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<OrderItemEntity> orderItems = new ArrayList<>();
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        ProductEntity product = (ProductEntity) o;
+        return Objects.equals(id, product.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     public CategoryEntity getCategoryEntity(){
         return categoryEntity;
     }
@@ -56,9 +86,6 @@ public class ProductEntity extends BaseEntity{
     public void setCategoryEntity(CategoryEntity categoryEntity){
         this.categoryEntity = categoryEntity;
     }
-
-    @Column(name = "created_by")
-    private String createdBy;
 
     public Long getId(){
         return id;
@@ -138,5 +165,9 @@ public class ProductEntity extends BaseEntity{
 
     public void setCreatedBy(String createdBy){
         this.createdBy = createdBy;
+    }
+
+    public List<OrderItemEntity> getOrderItems(){
+        return orderItems;
     }
 }
